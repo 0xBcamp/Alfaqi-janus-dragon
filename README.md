@@ -36,14 +36,14 @@ This innovative app aims to streamline healthcare processes, offering a user-fri
 - Improves accessibility, connectivity, and real-time interaction between patients and doctors, fostering efficient healthcare delivery.
 
 ## Resources
-1. **Moon Wallet Odyssey**: [Discover Moon Wallet's capabilities](https://usemoon.ai/), the foundational cornerstone of ChainFusion.
-2. **Moon SDK Chronicles**: [Explore practical applications of Moon SDK](https://github.com/moon-up/moon-sdk/tree/main/examples/moon-siwe-sdk-example) and draw integration inspiration.
-3. **Accounts API Codex**: [Unravel the secrets of the Accounts API](https://github.com/moon-up/moon-sdk-python/blob/main/docs/AccountsApi.md) for backend prowess.
-4. **AI Integration Saga**: [Delve into AI integration](https://python.langchain.com/docs/integrations/tools/chatgpt_plugins) to enhance ChainFusion's capabilities.
-5. **Moon SIWE Epic**: [Examine a live example](https://github.com/ewhal/moon-siwe-example/blob/main/web/src/index.js) of Moon Wallet’s integration and strength.
-6. **React Hooks Enigma**: [Uncover the mysteries of Moon React hooks](https://github.com/moon-up/moon-sdk/blob/main/packages/moon-react/src/hooks/useMoon.ts) for intuitive UI design.
-7. **Moon API Tome**: [Navigate the comprehensive Moon API](https://docs.usemoon.ai/api) for advanced functionality insights.
-8. **Python SDK Scrolls**: [Embark on a journey with Moon SDK's Python documentation](https://github.com/moon-up/moon-sdk-python/tree/main/docs) for Python-based integrations.
+1. **Moon Wallet Odyssey**: [Discover Moon Wallet's capabilities](https://usemoon.ai/).
+2. **Moon SDK Chronicles**: [Explore practical applications of Moon SDK](https://github.com/moon-up/moon-sdk/tree/main/examples/moon-siwe-sdk-example).
+3. **Accounts API Codex**: [Unravel the secrets of the Accounts API](https://github.com/moon-up/moon-sdk-python/blob/main/docs/AccountsApi.md).
+4. **AI Integration Saga**: [Delve into AI integration](https://python.langchain.com/docs/integrations/tools/chatgpt_plugins).
+5. **Moon SIWE Epic**: [Examine a live example](https://github.com/ewhal/moon-siwe-example/blob/main/web/src/index.js).
+6. **React Hooks Enigma**: [Uncover the mysteries of Moon React hooks](https://github.com/moon-up/moon-sdk/blob/main/packages/moon-react/src/hooks/useMoon.ts).
+7. **Moon API Tome**: [Navigate the comprehensive Moon API](https://docs.usemoon.ai/api).
+8. **Python SDK Scrolls**: [Embark on a journey with Moon SDK's Python documentation](https://github.com/moon-up/moon-sdk-python/tree/main/docs).
 
 
 ## Examples
