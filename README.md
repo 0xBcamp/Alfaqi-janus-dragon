@@ -35,8 +35,6 @@ This innovative app aims to streamline healthcare processes, offering a user-fri
 - Enhances security and transparency through blockchain, safeguarding sensitive medical information.
 - Improves accessibility, connectivity, and real-time interaction between patients and doctors, fostering efficient healthcare delivery.
 
-![healthcare](healthcare.png)
-
 ## Resources
 1. **Moon Wallet Odyssey**: [Discover Moon Wallet's capabilities](https://usemoon.ai/), the foundational cornerstone of ChainFusion.
 2. **Moon SDK Chronicles**: [Explore practical applications of Moon SDK](https://github.com/moon-up/moon-sdk/tree/main/examples/moon-siwe-sdk-example) and draw integration inspiration.
