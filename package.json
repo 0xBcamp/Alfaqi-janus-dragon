@@ -24,12 +24,11 @@
     "start": "yarn workspace nextjs dev",
     "next:lint": "yarn workspace nextjs lint",
     "next:format": "yarn workspace nextjs format",
-    "next:check-types": "yarn workspace nextjs check-types",
+    "check-types": "yarn workspace nextjs check-types",
     "postinstall": "husky install",
     "precommit": "lint-staged",
     "vercel": "yarn workspace nextjs vercel",
-    "vercel:yolo": "yarn workspace nextjs vercel:yolo",
-    "check-types": "./node_modules/.bin/tsc --noEmit"
+    "vercel:yolo": "yarn workspace nextjs vercel:yolo"
   },
   "packageManager": "yarn@3.2.3",
   "devDependencies": {
