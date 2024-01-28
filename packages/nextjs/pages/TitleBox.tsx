@@ -2,7 +2,7 @@ import { Box, Typography, Grid } from "@mui/material";
 
 const TitleBox: React.FC = () => {
   return (
-    <Grid xs={0} sm={0} md={6} lg={6} xl={6} minHeight={550}>
+    <Grid item xs={0} sm={0} md={6} lg={6} xl={6} minHeight={550}>
       <Box
         sx={{
           backgroundImage: `linear-gradient(135deg, rgba(0, 255, 60, 0.3) , rgba(0, 157, 255, 0.3))`,
@@ -27,7 +27,7 @@ const TitleBox: React.FC = () => {
           justifyContent="center"
           alignItems="flex-start"
         >
-          <Typography variant="h4" fontWeight="bold" color="black" mb={3}>
+          <Typography variant="h4" fontWeight="bold" color="black" mb={2}>
             Join us to revolutionize the Healthcare Industry!
           </Typography>
           <Typography variant="body1" fontWeight="" color="black">
