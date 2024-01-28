@@ -88,6 +88,7 @@ const SigninPage: React.FC = () => {
 					password,
 				};
 				console.log('Signing up...');
+				console.log(email, password);
 				const signupResponse: any = await auth.emailSignup(signupRequest);
 				console.log('Signup successful:', signupResponse);
 
@@ -172,7 +173,7 @@ const SigninPage: React.FC = () => {
 	};
 	
 	return (
-		<Grid
+		<Grid item
 		  xs={12}
 		  sm={12}
 		  md={6}
@@ -191,7 +192,7 @@ const SigninPage: React.FC = () => {
 		>
 		  <Box
 			sx={{
-			  backgroundColor: "rgba(0, 24, 57, 0.2)",
+			  backgroundColor: 'rgba(50, 200, 160, 0.5)',
 			  display: "flex",
 			  flexDirection: "column",
 			  alignItems: "center",
@@ -218,7 +219,7 @@ const SigninPage: React.FC = () => {
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "center",
-					boxShadow: `0 0 20px ${colors.green[500]}`,
+					boxShadow: `0 0 20px ${colors.green[50]}`,
 				  }}
 				>
 				  <Typography variant="h6" fontWeight="bold" color="white">
@@ -238,7 +239,7 @@ const SigninPage: React.FC = () => {
 				  mt={7}
 				  mb={1}
 				>
-				  Simplifying healthcare management systems
+				  Security for all
 				</Typography>
 				<Typography
 				  color="white"
@@ -254,7 +255,7 @@ const SigninPage: React.FC = () => {
 				  mt={7}
 				  mb={3}
 				>
-				  Sign in to our system
+				  Sign in to access your account
 				</Typography>
 			  </Box>
 	
@@ -264,12 +265,16 @@ const SigninPage: React.FC = () => {
 				placeholder="Enter your email..."
 				isIconActive={false}
 				type="text" // Set the type as "text" for email input
+				value={email}
+				onChange={handleEmailChange}
 				/>
 				<CustomInput
 				label="Password"
 				placeholder="Enter your password..."
 				isIconActive={true}
 				type="password" // Set the type as "password" for password input
+				value={password}
+				onChange={handlePasswordChange}
 				/>
 
 				{isSignUp && (

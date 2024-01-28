@@ -15,6 +15,8 @@ const CustomInput: React.FC<{
   type: string;
   label: string;
   placeholder: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }> = ({ isIconActive, type, label, placeholder }) => {
   const [isPasswordVisible, setIsPasswordVisible] = React.useState(false);
 
@@ -32,7 +34,7 @@ const CustomInput: React.FC<{
         </Typography>
         <Paper
           sx={{
-            background: colors.input[500],
+            background: colors.input[250],
             width: "100%",
           }}
         >
@@ -40,7 +42,7 @@ const CustomInput: React.FC<{
             placeholder={placeholder}
             fullWidth
             sx={{
-              bgcolor: colors.input[500],
+              bgcolor: colors.input[250],
               p: 1,
               borderRadius: "5px",
             }}
