@@ -12,9 +12,12 @@
   "dependencies": {
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
+    "@helia/dag-cbor": "^3.0.0",
+    "@helia/json": "^3.0.0",
     "@mui/icons-material": "^5.15.6",
     "@mui/material": "^5.15.6",
     "available-typed-arrays": "^1.0.5",
+    "helia": "^4.0.0",
     "mdb-react-ui-kit": "^7.1.0",
     "next": "latest",
     "next-pwa": "^5.6.0",
