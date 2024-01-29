@@ -21,14 +21,14 @@
     "hardhat:lint-staged": "yarn workspace @se-2/hardhat lint-staged",
     "hardhat:test": "yarn workspace @se-2/hardhat test",
     "test": "yarn hardhat:test",
-    "start": "yarn workspace @se-2/nextjs dev",
-    "next:lint": "yarn workspace @se-2/nextjs lint",
-    "next:format": "yarn workspace @se-2/nextjs format",
-    "next:check-types": "yarn workspace @se-2/nextjs check-types",
+    "start": "yarn workspace nextjs dev",
+    "next:lint": "yarn workspace nextjs lint",
+    "next:format": "yarn workspace nextjs format",
+    "check-types": "yarn workspace nextjs check-types",
     "postinstall": "husky install",
     "precommit": "lint-staged",
-    "vercel": "yarn workspace @se-2/nextjs vercel",
-    "vercel:yolo": "yarn workspace @se-2/nextjs vercel:yolo"
+    "vercel": "yarn workspace nextjs vercel",
+    "vercel:yolo": "yarn workspace nextjs vercel:yolo"
   },
   "packageManager": "yarn@3.2.3",
   "devDependencies": {
@@ -39,15 +39,18 @@
     "usehooks-ts@^2.7.2": "patch:usehooks-ts@npm:^2.7.2#./.yarn/patches/usehooks-ts-npm-2.7.2-fceffe0e43.patch"
   },
   "dependencies": {
+    "@helia/dag-cbor": "^3.0.0",
+    "@helia/json": "^3.0.0",
     "@moonup/ethers": "^0.0.11",
     "@moonup/moon-api": "^0.0.23",
     "@moonup/moon-rainbowkit": "^0.0.26",
     "@moonup/moon-sdk": "^0.0.40",
     "@moonup/types": "^0.0.6",
     "@moonup/wagmi-connector": "^0.0.21",
-    "helia": "^3.0.1",
+    "helia": "^4.0.0",
     "livepeer": "^3.0.1",
     "next": "latest",
+    "typescript": "^5.3.3",
     "video.js": "^8.9.0"
   }
 }
