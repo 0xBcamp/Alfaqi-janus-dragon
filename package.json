@@ -1,56 +1,44 @@
 {
-  "name": "se-2",
-  "version": "0.0.1",
+  "name": "blockmedsecure",
+  "version": "0.1.0",
   "private": true,
-  "workspaces": {
-    "packages": [
-      "packages/hardhat",
-      "packages/nextjs"
-    ]
-  },
   "scripts": {
-    "account": "yarn workspace @se-2/hardhat account",
-    "chain": "yarn workspace @se-2/hardhat chain",
-    "fork": "yarn workspace @se-2/hardhat fork",
-    "deploy": "yarn workspace @se-2/hardhat deploy",
-    "verify": "yarn workspace @se-2/hardhat verify",
-    "hardhat-verify": "yarn workspace @se-2/hardhat hardhat-verify",
-    "compile": "yarn workspace @se-2/hardhat compile",
-    "generate": "yarn workspace @se-2/hardhat generate",
-    "hardhat:lint": "yarn workspace @se-2/hardhat lint",
-    "hardhat:lint-staged": "yarn workspace @se-2/hardhat lint-staged",
-    "hardhat:test": "yarn workspace @se-2/hardhat test",
-    "test": "yarn hardhat:test",
-    "start": "yarn workspace nextjs dev",
-    "next:lint": "yarn workspace nextjs lint",
-    "next:format": "yarn workspace nextjs format",
-    "check-types": "yarn workspace nextjs check-types",
-    "postinstall": "husky install",
-    "precommit": "lint-staged",
-    "vercel": "yarn workspace nextjs vercel",
-    "vercel:yolo": "yarn workspace nextjs vercel:yolo"
-  },
-  "packageManager": "yarn@3.2.3",
-  "devDependencies": {
-    "husky": "^8.0.1",
-    "lint-staged": "^13.0.3"
-  },
-  "resolutions": {
-    "usehooks-ts@^2.7.2": "patch:usehooks-ts@npm:^2.7.2#./.yarn/patches/usehooks-ts-npm-2.7.2-fceffe0e43.patch"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@babel/core": "^7.23.7",
+    "@babel/eslint-parser": "^7.22.15",
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
     "@helia/dag-cbor": "^3.0.0",
-    "@helia/json": "^3.0.0",
-    "@moonup/ethers": "^0.0.11",
     "@moonup/moon-api": "^0.0.23",
-    "@moonup/moon-rainbowkit": "^0.0.26",
-    "@moonup/moon-sdk": "^0.0.40",
+    "@moonup/moon-sdk": "^0.0.43",
     "@moonup/types": "^0.0.6",
-    "@moonup/wagmi-connector": "^0.0.21",
+    "@mui/icons-material": "^5.15.6",
+    "@mui/material": "^5.15.6",
+    "autoprefixer": "^10.4.17",
     "helia": "^4.0.0",
-    "livepeer": "^3.0.1",
-    "next": "latest",
-    "typescript": "^5.3.3",
-    "video.js": "^8.9.0"
+    "mdb-react-ui-kit": "^7.2.0",
+    "next": "^14.1.0",
+    "next-pwa": "^5.6.0",
+    "postcss": "^8.4.33",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.0.1",
+    "tailwindcss": "^3.4.1",
+    "tw-elements": "^1.1.0",
+    "tw-elements-react": "^1.0.0-alpha2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.10",
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "^14.1.0",
+    "typescript": "^5.3.3"
   }
 }
