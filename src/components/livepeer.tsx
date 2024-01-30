@@ -1,18 +1,17 @@
 
 import { Livepeer } from "livepeer";
 import { Broadcast } from '@livepeer/react';
-import { addDataToIPFS, getDataFromIPFS } from "./ipfsHelia";
-import { encryptData, decryptData} from "./encryptData";
 
 const livepeer = new Livepeer({
   apiKey: LIVEPEER_API, // API KEY
 });
 const streamName = 'Patient Alias - Doctor Name';
 const crypto = require('crypto');
-let streamId = null;
-let streamKey = null;
-let livestreamToken = {};
+let streamId = null; // streamId is setted when the stream is created
+let streamKey = null; // streamKey is setted when the stream is created
+let playbackId = null; // playbackId is setted when the stream is created - used for playing recorded streams // TODO: implement this feature
 
+// Start the stream and return the stream object, which contains the streamId and streamKey
 const startStream = async (isRecording) => { // isRecording is a boolean value that is only true when the doctor and patient give consent to record the session
   const streamData = {
     name: streamName,
@@ -45,9 +44,10 @@ const startStream = async (isRecording) => { // isRecording is a boolean value t
   try {
     const stream = await livepeer.stream.create(streamData);
 
-    // Set the streamId and streamKey
+    // Set the streamId, streamKey and playbackId
     streamId = stream.id;
     streamKey = stream.streamKey;
+    playbackId = stream.playbackId;
 
     console.log("Stream created:", stream);
 
@@ -59,6 +59,7 @@ const startStream = async (isRecording) => { // isRecording is a boolean value t
   }
 };
 
+// Terminate the stream
 const terminateStream = async (streamId) => {
     try {
       const response = await fetch(`https://livepeer.studio/api/stream/${streamId}/terminate`, {
@@ -78,6 +79,7 @@ const terminateStream = async (streamId) => {
     }
   };
 
+// Retrieve the stream object
 const retrieveStream = async (streamId) => {
     (async () => {
         try {
@@ -89,6 +91,7 @@ const retrieveStream = async (streamId) => {
       })();
     };
 
+// Broadcast the stream to the browser using livepeer-react 
 const broadcastStream = () => {
         return (
           <Broadcast
@@ -119,28 +122,5 @@ const broadcastStream = () => {
           );
         }
 
-const generateAccessToken = (userAddress, streamId) => { // userAddress and streamId are associated with the token generated
-    const token = crypto.randomBytes(16).toString('hex');
 
-    return {token, userAddress, streamId};
-};
-
-const storeToken = async (token, userAddress, streamId) => {
-    const cid = await addDataToIPFS(token); // Store encrypted token on IPFS and get CID so it can be retrieved by the other party
-  
-    // Store the CID in a in the Patient Data with the streamId - probably will need to add a new array to the Patient Data
-    livestreamToken[userAddress] = { streamId, cid };
-    addPatientData(userAddress, livestreamToken[userAddress]); // This need to be implemented on the Smart Contract and adjusted
-
-    return {cid, streamId};
-  };
-
-const retrieveToken = async (userAddress) => { // Returns the decrypted token and streamId associated with it
-    const {cid, streamId} = livestreamToken[userAddress];
-    const token = await getDataFromIPFS(cid);
-
-    return {token, streamId};
-}
-
-
-export { startStream, terminateStream, retrieveStream, broadcastStream, generateAccessToken, storeToken, retrieveToken };
+export { startStream, terminateStream, retrieveStream, broadcastStream };
