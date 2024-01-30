@@ -1,12 +1,11 @@
 
 import { Livepeer } from "livepeer";
-import { Broadcast } from '@livepeer/react';
+import { Player, Broadcast } from '@livepeer/react';
 
 const livepeer = new Livepeer({
   apiKey: LIVEPEER_API, // API KEY
 });
-const streamName = 'Patient Alias - Doctor Name';
-const crypto = require('crypto');
+const streamName = 'Patient Alias - Doctor Name'; // TODO: implement this feature
 let streamId = null; // streamId is setted when the stream is created
 let streamKey = null; // streamKey is setted when the stream is created
 let playbackId = null; // playbackId is setted when the stream is created - used for playing recorded streams // TODO: implement this feature
@@ -59,13 +58,33 @@ const startStream = async (isRecording) => { // isRecording is a boolean value t
   }
 };
 
+// Play the stream
+const playStream = () => {
+  return (
+    <Player
+      title={streamName}
+      playbackId={playbackId}
+      showPipButton
+      showTitle={false}
+      aspectRatio="16to9"
+      controls={{
+        autohide: 3000,
+      }}
+      theme={{
+        borderStyles: { containerBorderStyle: "hidden" },
+        radii: { containerBorderRadius: "10px" },
+      }}
+    />
+  );
+};
+
 // Terminate the stream
 const terminateStream = async (streamId) => {
     try {
       const response = await fetch(`https://livepeer.studio/api/stream/${streamId}/terminate`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${apiKey}`
+          'Authorization': `Bearer ${LIVEPEER_API}`
         }
       });
   
@@ -91,8 +110,8 @@ const retrieveStream = async (streamId) => {
       })();
     };
 
-// Broadcast the stream to the browser using livepeer-react 
-const broadcastStream = () => {
+// Broadcast live video content directly from user’s web browser to online audiences in real-time
+const broadcastStream = (streamName, streamKey) => {
         return (
           <Broadcast
             title={streamName}
@@ -123,4 +142,4 @@ const broadcastStream = () => {
         }
 
 
-export { startStream, terminateStream, retrieveStream, broadcastStream };
+export { startStream, playStream, terminateStream, retrieveStream, broadcastStream };
