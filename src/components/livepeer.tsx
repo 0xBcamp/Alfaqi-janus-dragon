@@ -8,7 +8,7 @@ const livepeer = new Livepeer({
 const streamName = 'Patient Alias - Doctor Name'; // TODO: implement this feature
 let streamId = null; // streamId is setted when the stream is created
 let streamKey = null; // streamKey is setted when the stream is created
-let playbackId = null; // playbackId is setted when the stream is created - used for playing recorded streams // TODO: implement this feature
+let playbackId = null; // playbackId is setted when the stream is created - used for playing recorded streams
 
 // Start the stream and return the stream object, which contains the streamId and streamKey
 const startStream = async (isRecording) => { // isRecording is a boolean value that is only true when the doctor and patient give consent to record the session
@@ -103,7 +103,8 @@ const retrieveStream = async (streamId) => {
     (async () => {
         try {
           const res = await livepeer.stream.get(streamId);
-          // Handle the response (res.data)
+          return res;
+
         } catch (error) {
           console.error(error);
         }
