@@ -1,33 +1,27 @@
-import { Box, Grid } from "@mui/material";
 import React from 'react';
-import SigninPage from "../components/SigninPage";
-import TitleBox from "../components/TitleBox";
 import MainLayout from "./layout/MainLayout";
-
+import { routes } from "../routes";
+import { AuthProvider } from '.././components/authContext';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { StaticRouter } from "react-router-dom/server";
+import { Provider } from 'react-redux';
+import { store } from '../redux/store';
 
 const App: React.FC = () => {
   return (
-    <MainLayout>
-      <Box
-        sx={{
-          width: {
-            sm: "90vw",
-            xs: "90vw",
-            md: "60vw",
-            lg: "60vw",
-            xl: "60vw",
-          },
-        }}
-      >
-        {/* GRID SYSTEM */}
-        <Grid container height="90vh">
-          <SigninPage />
-
-          <TitleBox />
-        </Grid>
-        {/* GRID SYSTEM END */}
-      </Box>
-    </MainLayout>
+  <Provider store={store}>
+    <StaticRouter>
+      <AuthProvider>
+        <Routes>
+          {/* Define the root path with MainLayout as the element. */}
+          <Route path="/" element={<MainLayout />}>
+            {/* Spread the dynamically generated routes here */}
+            {routes}
+          </Route>
+        </Routes>
+      </AuthProvider>
+    </StaticRouter>
+  </Provider>
   );
 };
 

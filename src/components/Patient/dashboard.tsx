@@ -8,13 +8,14 @@ import Medications from './medications';
 
 
 const PatientDashboard = () => {
-  const mockMedicalRecords = ['...', '...'],
-  const mockTestResults = ['...', '...'],
-  const mockAllergies = ['...', '...'],
-  const mockChronicIlness = ['...', '...'],
-  const mockPermissions = ['...', '...'],
-  const mockMedications = ['...', '...'],
-
+  // Assuming these arrays are part of your component's state or just static data for now
+  const mockMedicalRecords = ['...', '...'];
+  const mockTestResults = ['...', '...'];
+  const mockAllergies = ['...', '...'];
+  const mockChronicIlness = ['...', '...'];
+  const mockPermissions = ['...', '...'];
+  const mockMedications = ['...', '...'];
+  
   return (
     <div className="container mx-auto">
       <h1 className="text-2xl font-bold text-center my-4">Patient Dashboard</h1>
