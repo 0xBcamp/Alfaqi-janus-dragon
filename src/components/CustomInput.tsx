@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { colors } from "../pages/theme";
-import React, {useState} from "react";
+import React, { useState } from "react";
 
 const CustomInput: React.FC<{
   isIconActive: boolean;
@@ -17,8 +17,8 @@ const CustomInput: React.FC<{
   placeholder: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}> = ({ isIconActive, type, label, placeholder }) => {
-  const [isPasswordVisible, setIsPasswordVisible] = React.useState(false);
+}> = ({ isIconActive, type, label, placeholder, value, onChange }) => {
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   return (
     <Box
@@ -40,6 +40,8 @@ const CustomInput: React.FC<{
         >
           <InputBase
             placeholder={placeholder}
+            value={value} // Use the value prop to display the current value
+            onChange={onChange} // Use the onChange prop to update the value
             fullWidth
             sx={{
               bgcolor: colors.input[250],
@@ -64,4 +66,3 @@ const CustomInput: React.FC<{
 };
 
 export default CustomInput;
-
