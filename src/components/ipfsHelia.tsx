@@ -1,5 +1,6 @@
 import { createHelia } from 'helia'
 import { dagCbor } from '@helia/dag-cbor';
+import { decryptData, encryptData } from './encryptData';
 
 
 // Create an instance of Helia
@@ -11,7 +12,11 @@ const d = dagCbor(helia);
 // Add data to IPFS
 // Returns the CID of the data
 async function addDataToIPFS(data : any) {
-    const cid = await d.add(data);
+    //Encrypt the data
+    const encryptedData = encryptData(data);
+
+    const cid = await d.add(encryptedData);
+    
     return cid;
 }
 
@@ -20,6 +25,10 @@ async function addDataToIPFS(data : any) {
 // Returns the data
 async function getDataFromIPFS(cid) {
     const data = await d.get(cid);
+    
+    // Decrypt the data
+    const decryptedData = decryptData(data);
+
     return data;
 }
 
