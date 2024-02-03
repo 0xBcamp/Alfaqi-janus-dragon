@@ -170,6 +170,11 @@ contract BlockMedSecure {
         emit MedicalReportAdded(patientAddress, msg.sender, reportNumber, reportDate, ipfsHash);
     }
 
+    
+    ///////////////////
+    // Getter Functions
+    ///////////////////
+
     /**
      * @dev Function to retrieve all medical reports for a given patient.
      * @param patientAddress The Ethereum address of the patient.
@@ -178,4 +183,26 @@ contract BlockMedSecure {
     function getMedicalReports(address patientAddress) external view returns (MedicalReport[] memory) {
         return medicalReports[patientAddress];
     }
+
+    /**
+     * @dev Function to retrieve patient information.
+     * @param patientAddress The Ethereum address of the patient.
+     * @return The patient's information.
+     */
+    function getPatientInfo(address patientAddress) external view returns (PatientInfo memory) {
+        require(patients[patientAddress].walletAddress == patientAddress, "Patient not found");
+        return patients[patientAddress].patientInfo;
+    }
+
+    /**
+     * @dev Function to retrieve doctor information.
+     * @param doctorAddress The Ethereum address of the doctor.
+     * @return The doctor's information.
+     */
+    function getDoctorInfo(address doctorAddress) external view returns (DoctorInfo memory) {
+        require(doctors[doctorAddress].walletAddress == doctorAddress, "Doctor not found");
+        return doctors[doctorAddress].doctorInfo;
+    }
+
+
 }
