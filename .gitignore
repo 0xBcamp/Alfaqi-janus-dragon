@@ -13,7 +13,10 @@ docs/
 
 # Dotenv file
 .env
+.next
 
 # Node modules
 node_modules/
 
+# Next folder
+.next/
