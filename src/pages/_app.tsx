@@ -1,19 +1,21 @@
-import React from 'react';
-import MainLayout from "./layout/MainLayout";
-import { AuthProvider } from '.././components/authContext';
-import { Provider } from 'react-redux';
-import { store } from '../redux/store';
-import PatientDashboard from '../components/Patient/dashboard';
-import DoctorDashboard from '../components/Doctor/dashboard';
-import '../styles/globals.css'
+import React from "react";
+import { AuthProvider } from ".././components/authContext";
+import { Provider } from "react-redux";
+import { store } from "../redux/store";
+import "../styles/globals.css";
+import { AppProps } from "next/app";
+import NavBar from "../components/navBar";
 
-const App: React.FC = () => {
+const App = ({ Component, pageProps }: AppProps) => {
   return (
-  <Provider store={store}>
+    <Provider store={store}>
       <AuthProvider>
-        <PatientDashboard />
+        <div className="flex">
+          <NavBar />
+          <Component {...pageProps} />
+        </div>
       </AuthProvider>
-  </Provider>
+    </Provider>
   );
 };
 
