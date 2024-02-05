@@ -18,22 +18,10 @@ body {
   --color-primary: #00032c; /* Example: Using a blue shade as the primary color */
 }
 
-.dashboard-header h1 {
-  text-align: center;
-  font-size: 24px; /* Adjust size as needed */
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #233044; /* Adjust color as needed */
-}
-
-.card-title {
-  font-size: 20px; /* Adjust size as needed */
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.card-text {
-  font-size: 16px;
+.subtitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: white;
 }
 
 /* Style adjustments for two-column layout in Personal Info */
