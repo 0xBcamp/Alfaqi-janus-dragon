@@ -7,7 +7,7 @@ const TestResults = ({ results }) => {
       <ul>
         {results.map((result, index) => (
           <li key={index} className="mt-2">
-            <p><strong>{result.testName}</strong> - {result.date}: {result.outcome}</p>
+            <p>{result}</p>
           </li>
         ))}
       </ul>

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const HomePage = ( ) => {
+const HomePage: React.FC = () => {
   return (
     <div className="p-4">
       <h2 className="text-lg font-semibold">HomePage</h2>

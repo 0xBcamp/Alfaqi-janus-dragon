@@ -1,6 +1,6 @@
 import HomePage from "../components/Home/homepage";
 import PatientDashboard from "../components/Patient/dashboard";
-import DoctorDashboard from "../components/Patient/dashboard";
+import DoctorDashboard from "../components/Doctor/dashboard";
 import LoginPage from "../components/LoginPage";
 import TitleBox from "../components/TitleBox";
 import ContactForm from "../components/Contact/contactForm";
