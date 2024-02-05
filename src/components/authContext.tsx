@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState } from 'react';
-import { handleDisconnect } from './usemoonsdk';
+import React, { createContext, useContext, useState } from "react";
+import { handleDisconnect } from "./usemoonsdk";
 
 const AuthContext = createContext();
 
@@ -15,7 +15,6 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     handleDisconnect();
     setUser(null);
-
   };
 
   // Utility function to check if the user is authenticated
