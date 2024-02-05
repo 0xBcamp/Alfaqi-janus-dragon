@@ -9,7 +9,7 @@ const messages = []; // Populate with real data
 const sendMessage = (msg) => console.log(msg);
 const stream = null; // Replace with actual stream data
 
-const ConsultationPage = ({ userRole }) => {
+const ConsultationPage: React.FC = ({ userRole }) => {
   const [isLiveStreamEnabled, setIsLiveStreamEnabled] = useState(false);
   const [isDoctor, setIsDoctor] = useState(userRole === 'doctor');
 
@@ -22,3 +22,5 @@ const ConsultationPage = ({ userRole }) => {
     </div>
   );
 };
+
+export default ConsultationPage;

@@ -2,27 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
 body {
   /* fallback for old browsers */
-  background: #6a11cb;
+  background: rgb(0,157,255);
+  background: -moz-linear-gradient(135deg, rgba(0, 255, 60, 0.3) 0%, rgba(0, 157, 255, 0.3) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(135deg, rgba(0, 255, 60, 0.3) 0%,rgba(0, 157, 255, 0.3) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(135deg, rgba(0, 255, 60, 0.3) 0%,rgba(0, 157, 255, 0.3) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ff3c', endColorstr='#009dff',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
 
-  /* Chrome 10-25, Safari 5.1-6 */
-  background: -webkit-linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+:root {
+  /* Replace with your actual font families and primary color */
+  --font-sans: 'Open Sans', sans-serif; /* Example: Using Open Sans for sans-serif */
+  --font-serif: 'Merriweather', serif; /* Example: Using Merriweather for serif */
+  --color-primary: #00032c; /* Example: Using a blue shade as the primary color */
+}
 
-  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-  background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1))
+.dashboard-header h1 {
+  text-align: center;
+  font-size: 24px; /* Adjust size as needed */
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #233044; /* Adjust color as needed */
+}
+
+.card-title {
+  font-size: 20px; /* Adjust size as needed */
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.card-text {
+  font-size: 16px;
+}
+
+/* Style adjustments for two-column layout in Personal Info */
+.grid-cols-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* Style for horizontal line */
+hr {
+  border: 0;
+  height: 1px;
+  background-color: #c7c7c7; /* Adjust color as needed */
+  margin: 2px 0; /* Adjust spacing as needed */
 }

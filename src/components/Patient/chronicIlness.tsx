@@ -1,13 +1,13 @@
 import React from 'react';
 
-const ChronicIllness = ({ chronicIllness }) => {
+const ChronicIllness = ({ illness }) => {
   return (
     <div className="p-4">
-      <h2 className="text-lg font-semibold">ChronicIllness</h2>
+      <h2 className="text-lg font-semibold">Test Results</h2>
       <ul>
-        {chronicIllness.map((chronicIll, index) => (
+        {illness.map((ill, index) => (
           <li key={index} className="mt-2">
-            <p>{chronicIll}</p>
+            <p>{ill}</p>
           </li>
         ))}
       </ul>
