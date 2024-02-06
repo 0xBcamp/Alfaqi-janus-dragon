@@ -15,25 +15,13 @@ body {
   /* Replace with your actual font families and primary color */
   --font-sans: 'Open Sans', sans-serif; /* Example: Using Open Sans for sans-serif */
   --font-serif: 'Merriweather', serif; /* Example: Using Merriweather for serif */
-  --color-primary: #00032c; /* Example: Using a blue shade as the primary color */
+  --color-primary: #000000; /* Example: Using a blue shade as the primary color */
 }
 
-.dashboard-header h1 {
-  text-align: center;
-  font-size: 24px; /* Adjust size as needed */
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #233044; /* Adjust color as needed */
-}
-
-.card-title {
-  font-size: 20px; /* Adjust size as needed */
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.card-text {
-  font-size: 16px;
+.subtitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: white;
 }
 
 /* Style adjustments for two-column layout in Personal Info */
@@ -48,4 +36,12 @@ hr {
   height: 1px;
   background-color: #c7c7c7; /* Adjust color as needed */
   margin: 2px 0; /* Adjust spacing as needed */
+}
+
+/* In your global CSS file */
+.wide-card {
+  width: 90%; /* Example: make the card 90% of its container's width */
+  max-width: 800px; /* You can also set a max-width to prevent it from getting too wide on large screens */
+  margin-left: auto; /* Center the card horizontally */
+  margin-right: auto;
 }

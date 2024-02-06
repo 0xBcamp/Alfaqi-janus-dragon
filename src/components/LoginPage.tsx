@@ -8,6 +8,14 @@ import { useMoonSDK } from './usemoonsdk';
 import React, { useState } from "react";
 import { useAuth } from "./authContext";
 
+const textStyle = {
+    color: "white", // Ensures text color is white
+    textAlign: "center", // Centers the text
+    width: "100%", // Ensures the text spans the full width of its container
+    textShadow: "2px 2px 4px #000000",
+    fontweight: "bold"
+  };
+
 const LoginPage: React.FC = () => {
 	// States for authentication
 	const [email, setEmail] = useState('');
@@ -223,27 +231,6 @@ const LoginPage: React.FC = () => {
 				  </Typography>
 				</Box>
 				{/* LOGO END */}
-	
-				<Typography
-				  color="white"
-				  fontWeight="bold"
-				  sx={{
-					textAlign: "center",
-					marginTop: 4,
-					marginBottom: 0,
-				  }}
-				  mt={7}
-				  mb={1}
-				>
-				  Security for all
-				</Typography>
-				<Typography
-				  color="white"
-				  fontWeight="bold"
-				  sx={{ textAlign: "center", margin: 0 }}
-				  mt={7}
-				  mb={3}
-				></Typography>
 				<Typography
 				  color="white"
 				  fontWeight="bold"
@@ -314,7 +301,7 @@ const LoginPage: React.FC = () => {
             fullWidth
             sx={{ mt: 4, boxShadow: `0 0 20px ${colors.green[500]}` }}
           >
-            {loading ? (isSignUp ? "Signing up..." : "Signing in...") : isSignUp ? "Sing Up" : "Sing In"}
+            {loading ? (isSignUp ? "Signing up..." : "Signing in...") : isSignUp ? "Sign Up" : "Sign In"}
           </Button>
           <Switch
             checked={isSignUp} // Use isSignUp state to determine the switch state
