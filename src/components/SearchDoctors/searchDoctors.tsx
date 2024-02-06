@@ -4,14 +4,14 @@ import DoctorsList from './doctorsList';
 
 const SearchDoctorsPage = () => {
   const [doctors, setDoctors] = useState([]);
-  const [searchParams, setSearchParams] = useState({ specialty: '', date: '' });
+  const [searchParams, setSearchParams] = useState({ specialty: '', date: '', emergency: '' });
 
   useEffect(() => {
     // Fetch doctors based on searchParams
     // This is a placeholder. You'll need to replace it with actual API call.
     const fetchDoctors = async () => {
       // Assume this function fetches doctors based on search criteria
-      const response = await fetch(`/api/doctors?specialty=${searchParams.specialty}&date=${searchParams.date}`);
+      const response = await fetch(`/api/doctors?specialty=${searchParams.specialty}&date=${searchParams.date}&emergency=${searchParams.emergency}`);
       const data = await response.json();
       setDoctors(data);
     };

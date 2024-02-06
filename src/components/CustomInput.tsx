@@ -38,27 +38,28 @@ const CustomInput: React.FC<{
             width: "100%",
           }}
         >
-          <InputBase
-            placeholder={placeholder}
-            value={value} // Use the value prop to display the current value
-            onChange={onChange} // Use the onChange prop to update the value
-            fullWidth
-            sx={{
-              bgcolor: colors.input[250],
-              p: 1,
-              borderRadius: "5px",
-            }}
-            type={type === "password" && !isPasswordVisible ? "password" : "text"}
-            endAdornment={
-              isIconActive && type === "password" ? (
-                <InputAdornment position="end" sx={{ pr: 1 }}>
-                  <IconButton edge="end" onClick={() => setIsPasswordVisible(!isPasswordVisible)}>
-                    {isPasswordVisible ? <Visibility /> : <VisibilityOff />}
-                  </IconButton>
-                </InputAdornment>
-              ) : null
-            }
-          />
+        <InputBase
+          placeholder={placeholder}
+          value={value} // Use the value prop to display the current value
+          onChange={onChange} // Use the onChange prop to update the value
+          fullWidth
+          sx={{
+            bgcolor: colors.input[0],
+            p: 1,
+            borderRadius: "5px",
+            color: "black", // Add this line to set the text color to black
+          }}
+          type={type === "password" && !isPasswordVisible ? "password" : "text"}
+          endAdornment={
+            isIconActive && type === "password" ? (
+              <InputAdornment position="end" sx={{ pr: 1 }}>
+                <IconButton edge="end" onClick={() => setIsPasswordVisible(!isPasswordVisible)}>
+                  {isPasswordVisible ? <Visibility /> : <VisibilityOff />}
+                </IconButton>
+              </InputAdornment>
+            ) : null
+          }
+        />
         </Paper>
       </Box>
     </Box>

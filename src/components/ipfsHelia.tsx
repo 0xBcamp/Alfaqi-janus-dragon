@@ -20,7 +20,6 @@ async function addDataToIPFS(data : any) {
     return cid;
 }
 
-
 // Get data from IPFS using CID
 // Returns the data
 async function getDataFromIPFS(cid) {
@@ -31,7 +30,6 @@ async function getDataFromIPFS(cid) {
 
     return data;
 }
-
 
 export { addDataToIPFS, getDataFromIPFS };
 

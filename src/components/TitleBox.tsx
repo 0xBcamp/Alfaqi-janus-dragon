@@ -1,6 +1,14 @@
 import { Box, Typography, Grid } from "@mui/material";
 import React from 'react';
 
+const textStyle = {
+  color: "white", // Ensures text color is white
+  textAlign: "center", // Centers the text
+  width: "100%", // Ensures the text spans the full width of its container
+  textShadow: "2px 2px 4px #000000",
+  fontweight: "bold"
+};
+
 
 const TitleBox: React.FC = () => {
   return (
@@ -29,10 +37,10 @@ const TitleBox: React.FC = () => {
           justifyContent="center"
           alignItems="flex-start"
         >
-          <Typography variant="h4" fontWeight="bold" color="black" mb={2}>
+          <Typography variant="h4" style={textStyle} mb={2}>
             Join us to revolutionize the Healthcare Industry!
           </Typography>
-          <Typography variant="body1" fontWeight="" color="black">
+          <Typography variant="body1" style={textStyle} color="white">
             Easily create your account and start using our services.
           </Typography>
         </Box>
