@@ -2,46 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  /* fallback for old browsers */
-  background: rgb(0,157,255);
-  background: -moz-linear-gradient(135deg, rgba(0, 255, 60, 0.3) 0%, rgba(0, 157, 255, 0.3) 100%); /* FF3.6-15 */
-  background: -webkit-linear-gradient(135deg, rgba(0, 255, 60, 0.3) 0%,rgba(0, 157, 255, 0.3) 100%); /* Chrome10-25,Safari5.1-6 */
-  background: linear-gradient(135deg, rgba(0, 255, 60, 0.3) 0%,rgba(0, 157, 255, 0.3) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ff3c', endColorstr='#009dff',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
-}
-
-:root {
-  /* Replace with your actual font families and primary color */
-  --font-sans: 'Open Sans', sans-serif; /* Example: Using Open Sans for sans-serif */
-  --font-serif: 'Merriweather', serif; /* Example: Using Merriweather for serif */
-  --color-primary: #000000; /* Example: Using a blue shade as the primary color */
-}
-
-.subtitle {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: white;
-}
-
-/* Style adjustments for two-column layout in Personal Info */
-.grid-cols-2 {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-}
-
-/* Style for horizontal line */
-hr {
-  border: 0;
-  height: 1px;
-  background-color: #c7c7c7; /* Adjust color as needed */
-  margin: 2px 0; /* Adjust spacing as needed */
-}
-
-/* In your global CSS file */
-.wide-card {
-  width: 90%; /* Example: make the card 90% of its container's width */
-  max-width: 800px; /* You can also set a max-width to prevent it from getting too wide on large screens */
-  margin-left: auto; /* Center the card horizontally */
-  margin-right: auto;
+.text-gradient {
+  background: linear-gradient(90deg,#2c4423,#20412c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text
 }

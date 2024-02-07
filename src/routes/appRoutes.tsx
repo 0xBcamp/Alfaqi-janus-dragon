@@ -7,6 +7,7 @@ import LoginIcon from "@mui/icons-material/Login";
 import SearchIcon from "@mui/icons-material/Search";
 import PatientIcon from "@mui/icons-material/LocalHospital";
 import DoctorIcon from "@mui/icons-material/MedicalServices";
+import HowToRegIcon from '@mui/icons-material/HowToReg';
 
 const appRoutes: RouteType[] = [
   {
@@ -14,7 +15,7 @@ const appRoutes: RouteType[] = [
     state: "home",
   },
   {
-    path: "/Home",
+    path: "/home",
     state: "home",
     sidebarProps: {
       displayText: "Homepage",
@@ -61,6 +62,14 @@ const appRoutes: RouteType[] = [
     sidebarProps: {
       displayText: "Team contact",
       icon: <ContactIcon />,
+    },
+  },
+  {
+    path: "/appointment",
+    state: "appointment",
+    sidebarProps: {
+      displayText: "Appointment",
+      icon: <HowToRegIcon />,
     },
   },
 ];
