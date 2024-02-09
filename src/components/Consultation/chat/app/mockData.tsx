@@ -1,102 +1,29 @@
-export const userData = [
-    {
-        id: 1,
-        avatar: '/User1.png',
-        messages: [
-            {
-                id: 1,
-                avatar: '/User1.png',
-                name: 'Jane Doe',
-                message: 'Hey, Jakob',
-            },
-            {
-                id: 2,
-                avatar: '/LoggedInUser.jpg',
-                name: 'Jakob Hoeg',
-                message: 'Hey!',
-            },
-            {
-                id : 3,
-                avatar: '/User1.png',
-                name: 'Jane Doe',
-                message: 'How are you?',
-            },
-            {
-                id: 4,
-                avatar: '/LoggedInUser.jpg',
-                name: 'Jakob Hoeg',
-                message: 'I am good, you?',
-            },
-            {
-                id: 5,
-                avatar: '/User1.png',
-                name: 'Jane Doe',
-                message: 'I am good too!',
-            },
-            {
-                id: 6,
-                avatar: '/LoggedInUser.jpg',
-                name: 'Jakob Hoeg',
-                message: 'That is good to hear!'
-            },
-            {
-                id: 7,
-                avatar: '/User1.png',
-                name: 'Jane Doe',
-                message: 'How has your day been so far?',
-            },
-            {
-                id: 8,
-                avatar: '/LoggedInUser.jpg',
-                name: 'Jakob Hoeg',
-                message: 'It has been good. I went for a run this morning and then had a nice breakfast. How about you?',
-            },
-            {
-                id: 9,
-                avatar: '/User1.png',
-                name: 'Jane Doe',
-                message: 'I had a relaxing day. Just catching up on some reading.',
-            }
-        ],
-        name: 'Jane Doe',
-    },
-    {
-        id: 2,
-        avatar: '/User2.png',
-        name: 'John Doe',
-    },
-    {
-        id: 3,
-        avatar: '/User3.png',
-        name: 'Elizabeth Smith',
-    },
-    {
-        id: 4,
-        avatar: '/User4.png',
-        name: 'John Smith',
-    }
-];
+import { userAccountData } from "../../../LoginPage";
 
-export type UserData = (typeof userData)[number];
-
-export const loggedInUserData = {
-    id: 5,
-    avatar: '/LoggedInUser.jpg',
-    name: 'Jakob Hoeg',
-};
-
-export type LoggedInUserData = (typeof loggedInUserData);
+// New UserData structure to fit XMTP and application requirements
+export interface UserData {
+    role: string; // User role, e.g. "patient" or "doctor"
+    name: string; // User chosen name
+    address: string; // User's wallet address
+}
 
 export interface Message {
-    id: number;
-    avatar: string;
-    name: string;
-    message: string;
+    id: number; // Unique message ID
+    name: string; // Sender name, chosen by the sender
+    message: string; // Message content
+    senderAddress: string; // To identify the sender, use the XMTP address
 }
 
-export interface User {
-    id: number;
-    avatar: string;
-    messages: Message[];
-    name: string;
-}
+// Example user data, assuming you manage to fetch or set this elsewhere in your app
+export const usersData: UserData[] = [
+    { role: 'patient', name: 'Jane Doe', address: '0xJaneDoeAddress' },
+    { role: 'doctor', name: 'John Doe', address: '0xJohnDoeAddress' },
+    // Add more users as needed
+];
+
+// loggedInUserData should include the address now
+export const loggedInUserData: UserData = {
+    role: userAccountData.role, // User role, e.g. "patient" or "doctor"
+    name: 'Alias', // This can be set by the user in your application
+    address: userAccountData.address, // User's wallet address
+};

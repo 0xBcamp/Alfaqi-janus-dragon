@@ -16,19 +16,32 @@ import { Message, loggedInUserData } from "./app/mockData";
 import { Textarea } from "./ui/textarea";
 import { EmojiPicker } from "./emoji-picker";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { sendMessage, newConversation } from './xmtp';
+import { userAccountData } from "../../LoginPage";
 
 interface ChatBottombarProps {
-  sendMessage: (newMessage: Message) => void;
+  sendMessages: (newMessage: Message) => void;
+  selectedUserAddress: string;
   isMobile: boolean;
 }
 
 export const BottombarIcons = [{ icon: FileImage }, { icon: Paperclip }];
 
 export default function ChatBottombar({
-  sendMessage, isMobile,
+  sendMessages, selectedUserAddress, isMobile,
 }: ChatBottombarProps) {
   const [message, setMessage] = useState("");
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleSend = async () => {
+    if (message.trim()) {
+      await sendMessages(message.trim()); // Now directly sending the message string
+      setMessage("");
+      if (inputRef.current) {
+        inputRef.current.focus(); // Refocus on input
+      }
+    }
+  };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(event.target.value);
@@ -37,29 +50,12 @@ export default function ChatBottombar({
   const handleThumbsUp = () => {
     const newMessage: Message = {
       id: message.length + 1,
-      name: loggedInUserData.name,
-      avatar: loggedInUserData.avatar,
+      name: userAccountData.name,
       message: "👍",
+      senderAddress: userAccountData.address,
     };
-    sendMessage(newMessage);
+    sendMessages(newMessage);
     setMessage("");
-  };
-
-  const handleSend = () => {
-    if (message.trim()) {
-      const newMessage: Message = {
-        id: message.length + 1,
-        name: loggedInUserData.name,
-        avatar: loggedInUserData.avatar,
-        message: message.trim(),
-      };
-      sendMessage(newMessage);
-      setMessage("");
-
-      if (inputRef.current) {
-        inputRef.current.focus();
-      }
-    }
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {

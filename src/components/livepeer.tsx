@@ -1,17 +1,15 @@
-
 import { Livepeer } from "livepeer";
 import { Player, Broadcast } from '@livepeer/react';
 
 const livepeer = new Livepeer({
-  apiKey: LIVEPEER_API, // API KEY
+  apiKey: "a40a0604-c2fc-4f62-86e1-ffc9f13c3e93", // API KEY
 });
-const streamName = 'Patient Alias - Doctor Name'; // TODO: implement this feature
 let streamId = null; // streamId is setted when the stream is created
 let streamKey = null; // streamKey is setted when the stream is created
 let playbackId = null; // playbackId is setted when the stream is created - used for playing recorded streams
 
-// Start the stream and return the stream object, which contains the streamId and streamKey
-const startStream = async (isRecording) => { // isRecording is a boolean value that is only true when the doctor and patient give consent to record the session
+// Start the stream and return the streamId, streamKey and playbackId
+async function startStream (streamName, isRecording) { // isRecording is a boolean value that is only true when the doctor and patient give consent to record the session
   const streamData = {
     name: streamName,
     record: isRecording,
@@ -59,19 +57,19 @@ const startStream = async (isRecording) => { // isRecording is a boolean value t
 };
 
 // Play the stream
-const playStream = () => {
+function playStream (streamName, playbackId) {
   return (
     <Player
       title={streamName}
       playbackId={playbackId}
-      showPipButton
+      showPipButton={true}
       showTitle={false}
       aspectRatio="16to9"
       controls={{
         autohide: 3000,
       }}
       theme={{
-        borderStyles: { containerBorderStyle: "hidden" },
+        borderStyles: { containerBorderStyle: "solid" },
         radii: { containerBorderRadius: "10px" },
       }}
     />
@@ -79,7 +77,7 @@ const playStream = () => {
 };
 
 // Terminate the stream
-const terminateStream = async (streamId) => {
+async function terminateStream (streamId) {
     try {
       const response = await fetch(`https://livepeer.studio/api/stream/${streamId}/terminate`, {
         method: 'DELETE',
@@ -99,7 +97,7 @@ const terminateStream = async (streamId) => {
   };
 
 // Retrieve the stream object
-const retrieveStream = async (streamId) => {
+async function retrieveStream (streamId) {
     (async () => {
         try {
           const res = await livepeer.stream.get(streamId);
@@ -112,7 +110,7 @@ const retrieveStream = async (streamId) => {
     };
 
 // Broadcast live video content directly from user’s web browser to online audiences in real-time
-const broadcastStream = (streamName, streamKey) => {
+function broadcastStream (streamName, streamKey) {
         return (
           <Broadcast
             title={streamName}
@@ -123,7 +121,7 @@ const broadcastStream = (streamName, streamKey) => {
             }}
             theme={{
                 borderStyles: {
-                  containerBorderStyle: "hidden",
+                  containerBorderStyle: "solid",
                 },
                 colors: {
                   accent: "#00a55f",
@@ -144,3 +142,4 @@ const broadcastStream = (streamName, streamKey) => {
 
 
 export { startStream, playStream, terminateStream, retrieveStream, broadcastStream };
+export { streamId, streamKey, playbackId};

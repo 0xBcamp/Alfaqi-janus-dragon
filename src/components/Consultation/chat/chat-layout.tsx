@@ -80,8 +80,8 @@ export function ChatLayout({
           links={userData.map((user) => ({
             name: user.name,
             messages: user.messages ?? [],
-            avatar: user.avatar,
             variant: selectedUser.name === user.name ? "grey" : "ghost",
+            onClick: () => setSelectedUser(user),
           }))}
           isMobile={isMobile}
         />

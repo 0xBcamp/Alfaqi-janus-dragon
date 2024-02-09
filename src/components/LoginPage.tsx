@@ -8,13 +8,12 @@ import { useMoonSDK } from './usemoonsdk';
 import React, { useState } from "react";
 import { useAuth } from "./authContext";
 
-const textStyle = {
-    color: "white", // Ensures text color is white
-    textAlign: "center", // Centers the text
-    width: "100%", // Ensures the text spans the full width of its container
-    textShadow: "2px 2px 4px #000000",
-    fontweight: "bold"
-  };
+let userAccountData: {
+	data: any;
+	role: string;
+	alias: string;
+	address: string;
+};
 
 const LoginPage: React.FC = () => {
 	// States for authentication
@@ -27,7 +26,7 @@ const LoginPage: React.FC = () => {
 	const [error, setError] = useState('');
 
 	// Authentication context
-	const { login, logout, isAuthenticated } = useAuth(); // Corrected usage
+	const { login, logout, isAuthenticated } = useAuth();
 
 	// Moon SDK states and functions
 	const {
@@ -141,9 +140,10 @@ const LoginPage: React.FC = () => {
 			console.log('New Account Data:', newAccount?.data);
 			console.log('Setting expiry and navigating...');
 			moon.MoonAccount.setExpiry(loginResponse.data.expiry);
-			const patientData = { data : newAccount.data.data, role : 'patient', address: newAccount.data.data.address }; //TODO: Implement user role
-			login(patientData);
+			userAccountData = { data : newAccount.data.data, role : 'patient', alias: 'Joe', address: newAccount.data.data.address }; //TODO: Implement user role and alias
+			login(userAccountData);
 			console.log('Authenticated Address:', newAccount.data.data.address);
+			console.log(isAuthenticated());
 		} catch (error) {
 			console.error('Error during sign-in:', error);
 			setError('Error signing in. Please try again.');
@@ -325,3 +325,4 @@ const LoginPage: React.FC = () => {
 }
 
 export default LoginPage;
+export { userAccountData };
