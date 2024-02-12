@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
 import { MoreHorizontal, SquarePen } from "lucide-react";
 import { cn } from "./lib/utils";
@@ -10,124 +11,67 @@ import {
   TooltipTrigger,
   TooltipProvider,
 } from "./ui/tooltip";
-import { Avatar, AvatarImage } from "./ui/avatar";
-import { Message } from "./app/mockData";
+
+// Assuming ConversationType matches the structure you get from XMTP or your application's state management
+interface ConversationType {
+  peerAddress: string; // Unique identifier for the conversation
+  lastMessage?: string; // Last message text for preview (optional)
+}
 
 interface SidebarProps {
   isCollapsed: boolean;
-  links: {
-    name: string;
-    messages: Message[];
-    avatar: string;
-    variant: "grey" | "ghost";
-  }[];
-  onClick?: () => void;
+  conversations: ConversationType[];
+  onSelectConversation: (peerAddress: string) => void; // Function to handle selecting a conversation
+  selectedPeerAddress?: string; // Currently selected conversation's peer address for highlighting
   isMobile: boolean;
 }
 
-export function Sidebar({ links, isCollapsed, isMobile }: SidebarProps) {
+export function Sidebar({
+  conversations,
+  isCollapsed,
+  onSelectConversation,
+  selectedPeerAddress,
+  isMobile,
+}: SidebarProps) {
   return (
     <div
       data-collapsed={isCollapsed}
-      className="relative group flex flex-col h-full gap-4 p-2 data-[collapsed=true]:p-2 "
+      className="relative group flex flex-col h-full gap-4 p-2 data-[collapsed=true]:p-2"
     >
       {!isCollapsed && (
         <div className="flex justify-between p-2 items-center">
           <div className="flex gap-2 items-center text-2xl">
             <p className="font-medium">Chats</p>
-            <span className="text-zinc-300">({links.length})</span>
+            <span className="text-zinc-300">({conversations.length})</span>
           </div>
 
           <div>
-            <Link
-              href="#"
-              className={cn(
-                buttonVariants({ variant: "ghost", size: "icon" }),
-                "h-9 w-9"
-              )}
-            >
+            <Link href="#" className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-9 w-9")}>
               <MoreHorizontal size={20} />
             </Link>
-
-            <Link
-              href="#"
-              className={cn(
-                buttonVariants({ variant: "ghost", size: "icon" }),
-                "h-9 w-9"
-              )}
-            >
+            <Link href="#" className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-9 w-9")}>
               <SquarePen size={20} />
             </Link>
           </div>
         </div>
       )}
       <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
-        {links.map((link, index) =>
-          isCollapsed ? (
-            <TooltipProvider key={index}>
-              <Tooltip key={index} delayDuration={0}>
-                <TooltipTrigger asChild>
-                  <Link
-                    href="#"
-                    className={cn(
-                      buttonVariants({ variant: link.variant, size: "icon" }),
-                      "h-11 w-11 md:h-16 md:w-16",
-                      link.variant === "grey" &&
-                        "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
-                    )}
-                  >
-                    <Avatar className="flex justify-center items-center">
-                      <AvatarImage
-                        src={link.avatar}
-                        alt={link.avatar}
-                        width={6}
-                        height={6}
-                        className="w-10 h-10 "
-                      />
-                    </Avatar>{" "}
-                    <span className="sr-only">{link.name}</span>
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent
-                  side="right"
-                  className="flex items-center gap-4"
-                >
-                  {link.name}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          ) : (
-            <Link
-              key={index}
-              href="#"
-              className={cn(
-                buttonVariants({ variant: link.variant, size: "xl" }),
-                link.variant === "grey" &&
-                  "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white shrink",
-                "justify-start gap-4"
-              )}
-            >
-              <Avatar className="flex justify-center items-center">
-                <AvatarImage
-                  src={link.avatar}
-                  alt={link.avatar}
-                  width={6}
-                  height={6}
-                  className="w-10 h-10 "
-                />
-              </Avatar>
-              <div className="flex flex-col max-w-28">
-                <span>{link.name}</span>
-                {link.messages.length > 0 && (
-                  <span className="text-zinc-300 text-xs truncate ">
-                    {link.messages[link.messages.length - 1].name.split(" ")[0]}
-                    : {link.messages[link.messages.length - 1].message}
-                  </span>
+        {conversations.map((conversation, index) => (
+          <Link key={index} href="#" onClick={() => onSelectConversation(conversation.peerAddress)}
+                className={cn(
+                  buttonVariants({ variant: selectedPeerAddress === conversation.peerAddress ? "grey" : "ghost", size: "xl" }),
+                  "flex items-center gap-4 p-2 cursor-pointer",
+                  selectedPeerAddress === conversation.peerAddress && "bg-gray-200 dark:bg-gray-700"
                 )}
-              </div>
-            </Link>
-          )
-        )}
+          >
+            <div className="flex flex-col">
+              <span className="font-medium truncate">{conversation.peerAddress}</span>
+              {conversation.lastMessage && (
+                <span className="text-zinc-300 text-xs truncate">{conversation.lastMessage}</span>
+              )}
+            </div>
+          </Link>
+        ))}
       </nav>
     </div>
   );

@@ -1,6 +1,4 @@
-import { Box, Grid } from "@mui/material";
 import { RouteType } from "./config";
-
 import HomeIcon from "@mui/icons-material/Home";
 import ContactIcon from "@mui/icons-material/ContactMail";
 import LoginIcon from "@mui/icons-material/Login";

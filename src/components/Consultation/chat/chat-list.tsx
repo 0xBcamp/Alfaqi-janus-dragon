@@ -1,8 +1,11 @@
-import { Message, UserData } from "./app/mockData";
+import { Message, UserData } from "./app/data";
 import { cn } from "./lib/utils";
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import ChatBottombar from "./chat-bottombar";
 import { AnimatePresence, motion } from "framer-motion";
+import { useXMTP } from "./xmtpContext";
+import { fetchConversations } from "./xmtp";
+import { useUserData } from "../../userDataContext";
 
 interface ChatListProps {
   messages?: Message[];
@@ -10,6 +13,33 @@ interface ChatListProps {
   sendMessage: (newMessage: Message) => void;
   isMobile: boolean;
 }
+
+const ConversationsList = () => {
+  const [conversations, setConversations] = useState([]);
+  const xmtpClient = useXMTP();
+  const userData = useUserData();
+
+  useEffect(() => {
+    const loadConversations = async () => {
+      if (!xmtpClient) return;
+      const conversations = await fetchConversations(xmtpClient);
+      setConversations(conversations);
+    };
+
+    loadConversations();
+  }, [xmtpClient]);
+
+  return (
+    <div>
+      {conversations.map((conversation, index) => (
+        <div key={index}>
+          {/* Display conversation details here */}
+          Conversation with {conversation.peerAddress}
+        </div>
+      ))}
+    </div>
+  );
+};
 
 export function ChatList({
   messages,
@@ -27,7 +57,7 @@ export function ChatList({
   }, [messages]);
 
   return (
-    <div className="w-full overflow-y-auto overflow-x-hidden h-full flex flex-col">
+    <div className="bg-white w-full overflow-y-auto overflow-x-hidden h-full flex flex-col">
       <div
         ref={messagesContainerRef}
         className="w-full overflow-y-auto overflow-x-hidden h-full flex flex-col"
@@ -54,10 +84,10 @@ export function ChatList({
               }}
               className={cn(
                 "flex flex-col gap-2 p-4 whitespace-pre-wrap",
-                message.senderAddress !== userAccountData.address ? "items-start" : "items-end"
+                message.senderAddress !== userData.address ? "items-start" : "items-end"
               )}
             >
-              <span className=" bg-primary p-3 rounded-md max-w-xs">
+              <span className="bg-primary p-3 rounded-md max-w-xs">
                 {message.message}
               </span>
             </motion.div>

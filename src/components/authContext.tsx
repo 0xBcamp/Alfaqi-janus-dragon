@@ -1,30 +1,53 @@
-import React, { createContext, useContext, useState } from "react";
-import { handleDisconnect } from "./usemoonsdk";
+import React, { createContext, useContext, useState, ReactNode } from "react";
+import { useMoonSDK } from "./usemoonsdk";
 
-const AuthContext = createContext();
+// Adjusting the AuthContextType to include login and logout functions
+interface AuthContextType {
+  isAuthenticated: boolean;
+  login: () => void;
+  logout: () => void;
+}
 
-export const useAuth = () => useContext(AuthContext);
+// Create the context
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // Now includes role and address
+// Handle disconnect
+const handleDisconnect = async () => {
+	try {
+		// Disconnect from Moon
+		await useMoonSDK().disconnect(); // Disconnect from Moon
+		console.log('Disconnected');
+	} catch (error) {
+		console.error('Error during disconnection:', error);
+	}
+};
 
-  const login = (userData) => {
-    setUser(userData); // userData includes role, address, and any other relevant information
+export const useAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [role, setRole] = useState<string>('');
+
+  const login = () => {
+    setIsAuthenticated(true); // Properly update state
+    // Assuming userData has properties isDoctor and isPatient to determine the role
   };
 
   const logout = () => {
-    handleDisconnect();
-    setUser(null);
+    handleDisconnect(); // Disconnect from Moon
+    setIsAuthenticated(false); // Properly update state
+    setRole(""); // Clear the role
   };
 
-  // Utility function to check if the user is authenticated
-  const isAuthenticated = () => !!user;
-
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, role, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
-
-export default AuthContext;

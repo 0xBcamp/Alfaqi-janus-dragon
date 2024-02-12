@@ -18,8 +18,11 @@ contract BlockMedSecure {
     // Struct to store details about a doctor's professional information
     struct DoctorInfo {
         string name;
+        string email;
         uint256 timeExperience;
         string specialty;
+        bool emergencyAppointment;
+        string availableTime;
     }
 
     // Struct to store information about a patient
@@ -184,6 +187,15 @@ contract BlockMedSecure {
         return medicalReports[patientAddress];
     }
 
+        /**
+     * @dev Function to retrieve all medical reports for a given doctor.
+     * @param patientAddress The Ethereum address of the doctor.
+     * @return An array of MedicalReport hashes representing the doctor medical reports history stored in IPFS.
+     */
+    function getDoctorReportsHistory() external view returns (string[] memory) {
+        return doctors[msg.sender].reportsHistory;
+    }
+
     /**
      * @dev Function to retrieve patient information.
      * @param patientAddress The Ethereum address of the patient.
@@ -204,5 +216,16 @@ contract BlockMedSecure {
         return doctors[doctorAddress].doctorInfo;
     }
 
-
+    /**
+     * @dev Function to retrieve all doctors.
+     * @return An array of all doctors in the system.
+     */
+    function getAllDoctors() external view returns (Doctor[] memory) {
+        Doctor[] memory allDoctors = new Doctor[](0);
+        for (uint256 i = 0; i < allDoctors.length; i++) {
+            allDoctors[i] = doctors[doctors[i].walletAddress];
+        }
+        return allDoctors;
+    }
 }
+

@@ -1,4 +1,3 @@
-import { Client } from "@xmtp/xmtp-js";
 import {
   ContentTypeAttachment,
   AttachmentCodec,
@@ -6,48 +5,21 @@ import {
   ContentTypeRemoteAttachment,
 } from "@xmtp/content-type-remote-attachment";
 import { addDataToIPFS } from "../../ipfsHelia";
-import { userAccountData } from "../../LoginPage";
-import { MoonSigner } from '@moonup/ethers';
-
-let xmtp = null;  // This will be the chat client
-
-// Create a new chat client at the XTMP network
-async function createChatClient() {
-  // Check if the user is logged and has an address
-    if (!userAccountData.address) {
-        console.log("User isn't logged in.");
-        return;
-    }
-    // Create a new chat client if the user doesnt already have one
-    try {
-      const signer = new MoonSigner({
-      rpcUrl: 'https://rpc.moonup.com',
-    });
-
-    const xmtpClient = await Client.create(signer, {env: "dev"});
-    
-    console.log(xmtpClient)
-    console.log("Client created",xmtpClient.address);
-    xmtp = xmtpClient;
-  } catch (error) {
-    console.log("Error creating client", error);
-  }
-}
 
 // Check if an address is on the network
 // First you need to check if the address you want to message is on the XMTP network. You can do this by calling client.canMessage with the address you want to message.
 // Message this XMTP message bot to get an immediate automated reply:
 // gm.xmtp.eth (0x937C0d4a6294cdfa575de17382c7076b579DC176) env:production
-async function canMessage(receiverAddress) {
-  const isOnProdNetwork = await xmtp.canMessage(receiverAddress);
+async function canMessage(xmtpClient, receiverAddress) {
+  const isOnProdNetwork = await xmtpClient.canMessage(receiverAddress);
   console.log("Can message: " + isOnProdNetwork);
   return isOnProdNetwork;
 }
 
 // Start a new conversation
 // You can create a new conversation with any EVM address activated on the XMTP network
-async function newConversation(receiverAddress) {
-  const conversation = await xmtp.conversations.newConversation(receiverAddress);
+async function newConversation(xmtpClient, receiverAddress) {
+  const conversation = await xmtpClient.conversations.newConversation(receiverAddress);
   console.log("Conversation created", newConversation);
   return conversation;
 }
@@ -69,8 +41,21 @@ async function sendMessage(conversation, usermessage) {
 // You can receive the complete message history in a conversation.
 async function streamMessages(conversation) {
   for await (const message of await conversation.streamMessages()) {
-  console.log(`New message from ${message.senderAddress}: ${message.content}`);
-  return message;
+    console.log(`New message from ${message.senderAddress}: ${message.content}`);
+    return message;
+  }
+}
+
+// Fetch conversation history
+async function fetchConversations (xmtpClient) {
+  try {
+    const conversations = await xmtpClient.conversations.list();
+    return conversations.map(conversation => ({
+      peerAddress: conversation.peerAddress,
+    }));
+  } catch (error) {
+    console.error('Failed to fetch conversations:', error);
+    return [];
   }
 }
 
@@ -136,4 +121,4 @@ async function receiveAttachment (message) {
   }
 }
 
-export { createChatClient, canMessage, newConversation, sendMessage, streamMessages, createRemoteAttachment, sendAttachment, receiveAttachment };
+export { canMessage, newConversation, sendMessage, streamMessages, fetchConversations, createRemoteAttachment, sendAttachment, receiveAttachment };

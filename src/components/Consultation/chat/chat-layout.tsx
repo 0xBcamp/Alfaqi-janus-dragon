@@ -1,6 +1,5 @@
 "use client";
 
-import { userData } from "./app/mockData";
 import React, { useEffect, useState } from "react";
 import {
   ResizableHandle,
@@ -10,6 +9,8 @@ import {
 import { cn } from "./lib/utils";
 import { Sidebar } from "./sidebar";
 import { Chat } from "./chat";
+import { fetchConversations } from "./xmtp";
+import { useXMTP } from "./xmtpContext";
 
 interface ChatLayoutProps {
   defaultLayout: number[] | undefined;
@@ -23,8 +24,10 @@ export function ChatLayout({
   navCollapsedSize,
 }: ChatLayoutProps) {
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
-  const [selectedUser, setSelectedUser] = React.useState(userData[0]);
+  const [selectedUser, setSelectedUser] = React.useState(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [conversations, setConversations] = useState([]); // New state to hold conversations
+  const xmtpClient = useXMTP(); // Use XMTP client from context
 
   useEffect(() => {
     const checkScreenWidth = () => {
@@ -43,14 +46,24 @@ export function ChatLayout({
     };
   }, []);
 
+  useEffect(() => {
+    // Function to fetch conversations
+    const fetchUserConversations = async () => {
+      if (!xmtpClient) return;
+      const convs = await fetchConversations(xmtpClient);
+      setConversations(convs);
+      // Optionally, set the first conversation as selected by default
+      if (convs.length > 0) {
+        setSelectedUser(convs[0].peerAddress); // Assuming you can derive user data from peerAddress
+      };
+    }
+    fetchUserConversations();
+  }, [xmtpClient]);
+ 
+
   return (
     <ResizablePanelGroup
       direction="horizontal"
-      onLayout={(sizes: number[]) => {
-        document.cookie = `react-resizable-panels:layout=${JSON.stringify(
-          sizes
-        )}`;
-      }}
       className="h-full items-stretch"
     >
       <ResizablePanel
@@ -59,40 +72,26 @@ export function ChatLayout({
         collapsible={true}
         minSize={isMobile ? 0 : 24}
         maxSize={isMobile ? 8 : 30}
-        onCollapse={() => {
-          setIsCollapsed(true);
-          document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(
-            true
-          )}`;
-        }}
-        onExpand={() => {
-          setIsCollapsed(false);
-          document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(
-            false
-          )}`;
-        }}
-        className={cn(
-          isCollapsed && "min-w-[50px] md:min-w-[70px] transition-all duration-300 ease-in-out"
-        )}
+        onCollapse={() => setIsCollapsed(true)}
+        onExpand={() => setIsCollapsed(false)}
+        className={cn(isCollapsed && "min-w-[50px] md:min-w-[70px] transition-all duration-300 ease-in-out")}
       >
         <Sidebar
           isCollapsed={isCollapsed || isMobile}
-          links={userData.map((user) => ({
-            name: user.name,
-            messages: user.messages ?? [],
-            variant: selectedUser.name === user.name ? "grey" : "ghost",
-            onClick: () => setSelectedUser(user),
-          }))}
+          conversations={conversations} // Pass conversations to Sidebar
+          onSelectConversation={(peerAddress) => setSelectedUser(peerAddress)}
+          selectedUser={selectedUser}
           isMobile={isMobile}
         />
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
-        <Chat
-          messages={selectedUser.messages}
-          selectedUser={selectedUser}
-          isMobile={isMobile}
-        />
+        {selectedUser && (
+          <Chat
+            selectedUser={selectedUser}
+            isMobile={isMobile}
+          />
+        )}
       </ResizablePanel>
     </ResizablePanelGroup>
   );

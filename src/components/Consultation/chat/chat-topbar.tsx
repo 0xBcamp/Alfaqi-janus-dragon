@@ -1,13 +1,13 @@
 import React from 'react';
 import { Avatar, AvatarImage } from './ui/avatar';
-import { UserData } from './app/mockData';
+import { UserData } from './app/data';
 import { Info, Video } from 'lucide-react';
 import { cn } from './lib/utils';
 import { buttonVariants } from './ui/button';
 import { startStream, playStream, terminateStream } from '../../livepeer';
-import sendMessage from './chat-bottombar';
-import { Message } from './app/mockData';
-import { userAccountData } from '../../LoginPage';
+import { Message } from './app/data';
+import { useUserData } from '../../userDataContext';
+import { sendMessage } from './xmtp';
 
 interface ChatTopbarProps {
   selectedUser: UserData;
@@ -16,6 +16,8 @@ interface ChatTopbarProps {
 export const TopbarIcons = [{ icon: Video }, { icon: Info }];
 
 export default function ChatTopbar({ selectedUser }: ChatTopbarProps) {
+  const userData = useUserData();
+
   const handleVideoCall = async () => { // Mark this function as async
     try {
       console.log("Starting stream");
@@ -23,17 +25,18 @@ export default function ChatTopbar({ selectedUser }: ChatTopbarProps) {
 
       if (stream) {
         console.log("Playing stream");
-        const streamPlayer = await playStream('TestStream', stream.playbackId); // And here as well
-        // Sends a link that calls the playStream function with the playbackId to the other user on the chat
+        const streamPlayer = await playStream('TestStream', stream.playbackId);
+        // Sends a link with the playbackId to the other user on the chat
         const message = `Hey, let's start a video call! Click here to join: https://livepeer.studio/api/playback/${stream.playbackId}`;
         const newMessage: Message = {
           id: Date.now(), // Updated ID generation to use timestamp
-          name: userAccountData.alias,
+          name: userData.alias,
           message: message.trim(),
-          senderAddress: userAccountData.address,
+          senderAddress: userData.address,
         };
-        // Assuming sendMessage function correctly sends a message via XMTP or another messaging service
-        // sendMessage(newMessage); // This call might need adjustment based on actual implementation
+
+        sendMessage(conversation, newMessage); 
+
       } else {
         console.error("Error starting stream");
       }
