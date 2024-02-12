@@ -7,14 +7,9 @@ import {
 import { useMoonSDK } from './usemoonsdk';
 import React, { useState } from "react";
 import { useAuth } from "./authContext";
+import { useUserData } from "./userDataContext";
+import Link from "next/link";
 
-const textStyle = {
-    color: "white", // Ensures text color is white
-    textAlign: "center", // Centers the text
-    width: "100%", // Ensures the text spans the full width of its container
-    textShadow: "2px 2px 4px #000000",
-    fontweight: "bold"
-  };
 
 const LoginPage: React.FC = () => {
 	// States for authentication
@@ -27,14 +22,24 @@ const LoginPage: React.FC = () => {
 	const [error, setError] = useState('');
 
 	// Authentication context
-	const { login, logout, isAuthenticated } = useAuth(); // Corrected usage
+	const { login, isAuthenticated } = useAuth();
+
+	// User data context
+	const { userData, setUserData }: { userData: any, setUserData: any } = useUserData();
+
+	const updateAddress = (newAddress) => {
+		setUserData((prev: any) => ({ ...prev, address: newAddress }));
+	};
+
+	const updateEmail = (newEmail) => {
+		setUserData((prev: any) => ({ ...prev, email: newEmail }));
+	}
 
 	// Moon SDK states and functions
 	const {
 		moon,
 		connect,
 		createAccount,
-		disconnect,
 		updateToken,
 		initialize
 	} = useMoonSDK();
@@ -75,7 +80,6 @@ const LoginPage: React.FC = () => {
 	
 	// Handle sign up
 	const handleSignup = async () => {
-		
 		await handleInitializeAndConnect();
 
 		try {
@@ -97,6 +101,7 @@ const LoginPage: React.FC = () => {
 				console.log(email, password);
 				const signupResponse: any = await auth.emailSignup(signupRequest);
 				console.log('Signup successful:', signupResponse);
+				// 
 			}
 		} catch (error) {
 			console.error('Error during signup:', error);
@@ -123,6 +128,8 @@ const LoginPage: React.FC = () => {
 			};
 			console.log('Authenticating...');
 			const loginResponse: any = await auth.emailLogin(loginRequest);
+			// Update auth context to authenticated
+			login();
 			console.log('Authentication successful:', loginResponse);
 
 			// Set tokens and email
@@ -141,31 +148,18 @@ const LoginPage: React.FC = () => {
 			console.log('New Account Data:', newAccount?.data);
 			console.log('Setting expiry and navigating...');
 			moon.MoonAccount.setExpiry(loginResponse.data.expiry);
-			const patientData = { data : newAccount.data.data, role : 'patient', address: newAccount.data.data.address }; //TODO: Implement user role
-			login(patientData);
+
+			// Update user data context with the email and address associated
+			updateEmail(email);
+			updateAddress(newAccount.data.data.address);
+
+			// Send the user to the dashboard
+			console.log('Navigating to dashboard...');
+
 			console.log('Authenticated Address:', newAccount.data.data.address);
 		} catch (error) {
 			console.error('Error during sign-in:', error);
 			setError('Error signing in. Please try again.');
-		} finally {
-			setLoading(false);
-		}
-	};
-	
-	// Handle disconnect
-	const handleDisconnect = async () => {
-		try {
-			setLoading(true);
-			setError(null);
-
-			// Disconnect from Moon
-			console.log('Disconnecting...');
-			await disconnect();
-			console.log('Disconnected');
-			logout();
-		} catch (error) {
-			console.error('Error during disconnection:', error);
-			setError('Error disconnecting from Moon. Please try again.');
 		} finally {
 			setLoading(false);
 		}

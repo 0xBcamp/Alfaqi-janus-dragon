@@ -1,25 +1,46 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, Title, Flex, Grid, Select, LineChart } from '@tremor/react';
+import { useUserData } from '../userDataContext';
+import { MoonProvider, MoonSigner } from '@moonup/ethers';
+import { ethers } from 'ethers';
+import { getDataFromIPFS } from '../ipfsHelia';
+import { decryptData } from '../encryptData';
 
 export default function DoctorDashboard() {
-  const mockData = {
-    personalInfo: {
-      Name: "Dr. Jane Doe",
-      Email: "jane.doe@example.com",
-      Specialty: "Cardiology"
-    },
-    appointments: ['Dora appointment details...', 'Frederick appointment details...'],
-    requests: ['John', 'Alfred'],
-    patients: ['Vitalik Buterin', 'Charles Hoskinson', 'Satoshi Nakamoto'],
-    medicalRecords: [
-      { patientName: 'Vitalik Buterin', date: '2024-01-01', time: '9:00 am', report: 'Record 1 details...' },
-      { patientName: 'Charles Hoskinson', date: '2024-01-02', time: '10:00 am', report: 'Record 2 details...' }
-    ],
-    // Assuming this data structure for the LineChart (to be implemented)
-  };
+  const [selectedPatient, setSelectedPatient] = useState(null);  
+  const mainContractABI = mainContractABI; // Your contract ABI
+  const mainContractAddress = "MAIN_CONTRACT_ADDRESS";
+  const appointmentContractABI = appointmentContractABI; // Your contract ABI
+  const appointmentContractAddress = "APPOINTMENT_CONTRACT_ADDRESS";
+  const userData = useUserData();
 
-  const [selectedPatient, setSelectedPatient] = useState(mockData.patients[0]);
+  const mainContractProvider = new ethers.Contract(mainContractAddress, mainContractABI, new MoonProvider({
+    rpcUrl: 'https://rpc.moonup.com',
+  }));
+
+  const mainContractSigner = new ethers.Contract(mainContractAddress, mainContractABI, new MoonSigner({
+    rpcUrl: 'https://rpc.moonup.com',
+  }));
+
+  const appointmentContractProvider = new ethers.Contract(appointmentContractAddress, appointmentContractABI, new MoonProvider({
+    rpcUrl: 'https://rpc.moonup.com',
+  }));
+  
+  const Data = {
+    personalInfo: {
+      Name: mainContractProvider.getDoctorInfo(userData.address).name,
+      Email: mainContractProvider.getDoctorInfo(userData.address).email,
+      Specialty: mainContractProvider.getDoctorInfo(userData.address).specialty,
+      Experience: mainContractProvider.getDoctorInfo(userData.address).timeExperience,
+      Emergency: mainContractProvider.getDoctorInfo(userData.address).emergencyAppointment,
+      Availability: mainContractProvider.getDoctorInfo(userData.address).availableTime,
+    },
+    appointments: appointmentContractProvider.getDoctorAppointments(userData.address),
+    requests: appointmentContractProvider.getDoctorRequests(),
+    patients: ['Vitalik Buterin', 'Charles Hoskinson', 'Satoshi Nakamoto'], // TODO - Replace with actual patient list
+    medicalRecords: mainContractProvider.getDoctorReportsHistory() // Returns an array of IPFS hashes of medical reports
+  };
 
   // Simulated function to get chart data for the selected patient
   // This should ideally come from your backend or data source
@@ -36,7 +57,7 @@ export default function DoctorDashboard() {
 
   const chartData = getChartDataForPatient(selectedPatient);
 
-  const personalInfo = Object.entries(mockData.personalInfo).map(([key, value]) => ({
+  const personalInfo = Object.entries(Data.personalInfo).map(([key, value]) => ({
     key,
     value,
   }));
@@ -49,21 +70,21 @@ export default function DoctorDashboard() {
     },
     {
       category: 'Next Appointments',
-      data: mockData.appointments,
+      data: Data.appointments,
     },
     {
       category: 'Appointment Requests',
-      data: mockData.requests,
+      data: Data.requests,
     },
     {
       category: 'Active Patients',
-      data: mockData.patients,
+      data: Data.patients,
     },
     {
       category: 'Medical Records',
-      data: mockData.medicalRecords.map((record, index) => ({
+      data: Data.medicalRecords.map((record, index) => ({
         name: `Record ${index + 1}`,
-        value: record,
+        value: decryptData(getDataFromIPFS(record)),  
       })),
     },
   ];
@@ -85,10 +106,10 @@ export default function DoctorDashboard() {
                   {item.data.map((record, index) => (
                     <React.Fragment key={index}>
                       <div className="flex justify-between items-center mb-2">
-                        <span className="subtitle">{`Patient: ${record.value.patientName}`}</span>
-                        <span className="subtitle text-right">{`Date: ${record.value.date}, ${record.value.time}`}</span>
+                        <span className="subtitle">{`Patient: ${record.value.patientAddress}`}</span>
+                        <span className="subtitle text-right">{`Date: ${record.value.reportDate}`}</span>
                       </div>
-                      <span className="text-base text-white">{record.value.report}</span>
+                      <span className="text-base text-white">{decryptData(getDataFromIPFS(record.value.ipfsHash))}</span>
                       {index < item.data.length - 1 && <hr className="my-2 border-gray-500" />}
                     </React.Fragment>
                   ))}
@@ -129,7 +150,7 @@ export default function DoctorDashboard() {
         <Card className="col-span-2 p-4 bg-gray-800">
           <Title className="text-lg font-bold text-white">Patient Health Overview</Title>
           <Select className="mt-4" value={selectedPatient} onChange={(e) => setSelectedPatient(e.target.value)}>
-            {mockData.patients.map((patient, index) => (
+            {Data.patients.map((patient, index) => (
               <option key={index} value={patient}>{patient}</option>
             ))}
           </Select>

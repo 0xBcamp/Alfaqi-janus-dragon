@@ -1,7 +1,9 @@
-import React from "react";
-import { Button, Box, Typography, Card } from "@mui/material";
+import React, { useState } from "react";
+import { Button, Box, Typography, Card, InputBase } from "@mui/material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import SickIcon  from "@mui/icons-material/Sick";
+import NavigateNext from "@mui/icons-material/NavigateNext";
+import { useUserData } from "../userDataContext";
 
 
 const HomePage: React.FC = () => {
@@ -10,6 +12,14 @@ const HomePage: React.FC = () => {
     color: "white",
     fontSize: "1.25rem", // Increase font size for better visibility
     padding: "10px 24px", // Increase padding for a larger button
+  };
+
+  const cardStyleTitles = {
+    backgroundColor: "#2C3E50", // Darker shade for contrast
+    color: "white",
+    padding: "20px", // Add some padding inside the card
+    textAlign: "center", // Center text inside the card
+    margin: "20px", // Add margin around the card for spacing
   };
 
   const cardStyle = {
@@ -27,9 +37,31 @@ const HomePage: React.FC = () => {
     textAlign: "center", // Centers the text
     width: "100%", // Ensures the text spans the full width of its container
     textShadow: "2px 2px 4px #000000",
-    fontweight: "bold"
+    fontWeight: "bold" // Corrected typo in fontWeight property
   };
 
+  const subTextStyle = {
+    color: "white", // Ensures text color is white
+    textAlign: "center", 
+    width: "80%", 
+    textShadow: "1px 1px 2px #000000",
+  };
+
+  const { userData } = useUserData();
+
+  // Update userData
+  const updateAlias = (newAlias: string) => {
+    userData.alias = newAlias;
+  };
+
+  const updateIsDoctor = (newIsDoctor) => {
+    userData.isDoctor = newIsDoctor;
+  };
+
+  const updateIsPatient = (newIsPatient) => {
+    userData.isPatient = newIsPatient;
+  };
+  
   return (
     <Box
       display="flex"
@@ -38,41 +70,79 @@ const HomePage: React.FC = () => {
       justifyContent="center"
       minHeight="100vh" // Use 100vh to ensure full screen height
     >
+      <Card style={{...cardStyleTitles}}>
         <Typography variant="h3" component="h2" gutterBottom style={textStyle}>
-          Welcome! <br/> To get you onboard, let's take a glimpse of what awaits you here.
+          Welcome! <br/> To get you onboard, we need to get some info about you. <br/> Answer the following questions and then click on the button below to proceed.
         </Typography>
-        <Typography variant="h3" component="h2" gutterBottom style={textStyle}>
-          Are you a:
+      </Card>
+        <Typography variant="h4" component="h3" gutterBottom style={subTextStyle}>
+          Are you a patient or a doctor?
         </Typography>
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        gap={2} // Maintain gap between buttons
-      >
-        <Card style={{ ...cardStyle, display: 'inline-block' }}>
+
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          gap={2} // Maintain gap between buttons
+        >
+          <Card style={{ ...cardStyle, display: 'inline-block' }}>
+            <Button
+              variant="contained"
+              startIcon={<AccountCircle />}
+              size="large"
+              style={buttonStyle}
+              onClick={() => {updateIsDoctor(true); updateIsPatient(false)}}
+            >
+              Doctor
+            </Button>
+          </Card>
+          <Card style={{ ...cardStyle, display: 'inline-block' }}>
+            <Button
+              variant="contained"
+              startIcon={<SickIcon />}
+              size="large"
+              style={buttonStyle}
+              onClick={() => {updateIsPatient(true); updateIsDoctor(false)}}
+            >
+              Patient
+            </Button>
+          </Card>
+        </Box>
+        <Typography variant="h4" component="h3" gutterBottom style={subTextStyle}>
+          How do you want to be called?
+        </Typography>
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+        >
+        <InputBase
+          placeholder="User"
+          onChange={(event) => updateAlias(event.target.value)}
+          fullWidth
+          sx={{
+            bgcolor: "white",
+            p: 1,
+            borderRadius: "2px",
+            color: "black", // Add this line to set the text color to black
+          }}
+        />
+        </Box>
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+        >
           <Button
             variant="contained"
-            startIcon={<AccountCircle />}
+            startIcon={<NavigateNext />}
             size="large"
             style={buttonStyle}
-            onClick={() => window.location.href = '/doctor'}
+            onClick={() => "/login"}
           >
-            Doctor
+            Proceed
           </Button>
-        </Card>
-        <Card style={{ ...cardStyle, display: 'inline-block' }}>
-          <Button
-            variant="contained"
-            startIcon={<SickIcon />}
-            size="large"
-            style={buttonStyle}
-            onClick={() => window.location.href = '/patient'}
-          >
-            Patient
-          </Button>
-        </Card>
-      </Box>
+        </Box>
     </Box>
   );
 };
