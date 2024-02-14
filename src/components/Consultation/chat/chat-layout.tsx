@@ -78,7 +78,7 @@ export function ChatLayout({
       >
         <Sidebar
           isCollapsed={isCollapsed || isMobile}
-          conversations={conversations} // Pass conversations to Sidebar
+          conversations={conversations} 
           onSelectConversation={(peerAddress) => setSelectedUser(peerAddress)}
           selectedUser={selectedUser}
           isMobile={isMobile}

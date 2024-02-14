@@ -2,7 +2,7 @@ import { Livepeer } from "livepeer";
 import { Player, Broadcast } from '@livepeer/react';
 
 const livepeer = new Livepeer({
-  apiKey: "a40a0604-c2fc-4f62-86e1-ffc9f13c3e93", // API KEY
+  apiKey: process.env.LIVEPEER_API
 });
 let streamId = null; // streamId is setted when the stream is created
 let streamKey = null; // streamKey is setted when the stream is created

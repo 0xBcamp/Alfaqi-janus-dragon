@@ -4,7 +4,6 @@ import {
   Paperclip,
   PlusCircle,
   SendHorizontal,
-  Smile,
   ThumbsUp,
 } from "lucide-react";
 import Link from "next/link";
@@ -12,15 +11,18 @@ import React, { useRef, useState } from "react";
 import { buttonVariants } from "./ui/button";
 import { cn } from "./lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { Message, loggedInUserData } from "./app/data";
+import { Message } from "./app/data";
 import { Textarea } from "./ui/textarea";
 import { EmojiPicker } from "./emoji-picker";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { useUserData } from "../../userDataContext";
+import { useXMTP } from "./xmtpContext";
 import { sendMessage, newConversation } from './xmtp';
-import { userAccountData } from "../../LoginPage";
 
+
+// Assuming sendMessages prop is for UI updates, renamed for clarity
 interface ChatBottombarProps {
-  sendMessages: (newMessage: Message) => void;
+  updateMessagesUI: (newMessage: Message) => void;
   selectedUserAddress: string;
   isMobile: boolean;
 }
@@ -28,33 +30,47 @@ interface ChatBottombarProps {
 export const BottombarIcons = [{ icon: FileImage }, { icon: Paperclip }];
 
 export default function ChatBottombar({
-  sendMessages, selectedUserAddress, isMobile,
+  updateMessagesUI, selectedUserAddress, isMobile,
 }: ChatBottombarProps) {
   const [message, setMessage] = useState("");
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const { userData } = useUserData();
+  const { xmtpClient } = useXMTP();
 
   const handleSend = async () => {
     if (message.trim()) {
-      await sendMessages(message.trim()); // Now directly sending the message string
-      setMessage("");
-      if (inputRef.current) {
-        inputRef.current.focus(); // Refocus on input
+      // Check if there's an existing conversation or create a new one
+      let conversation = await xmtpClient.conversations.getConversation(selectedUserAddress);
+      if (!conversation) {
+        conversation = await newConversation(xmtpClient, selectedUserAddress);
       }
+
+      // Send the message through XMTP
+      const sentMessage = await sendMessage(conversation, message.trim());
+      // Assuming updateMessagesUI is a method to update the UI with the new message
+      updateMessagesUI(sentMessage);
+      
+      setMessage("");
+      inputRef.current?.focus(); // Refocus on input
     }
   };
-
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(event.target.value);
   };
 
-  const handleThumbsUp = () => {
+  const handleThumbsUp = async () => {
     const newMessage: Message = {
       id: message.length + 1,
-      name: userAccountData.name,
+      name: userData.alias,
       message: "👍",
-      senderAddress: userAccountData.address,
+      senderAddress: userData.address,
     };
-    sendMessages(newMessage);
+    let conversation = await xmtpClient.conversations.getConversation(selectedUserAddress);
+    if (!conversation) {
+      conversation = await newConversation(xmtpClient, selectedUserAddress);
+    }
+    // Send the message through XMTP
+    const sentMessage = await sendMessage(conversation, newMessage);
     setMessage("");
   };
 
