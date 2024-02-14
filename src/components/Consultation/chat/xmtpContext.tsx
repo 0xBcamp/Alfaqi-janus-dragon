@@ -3,18 +3,23 @@ import { Client } from "@xmtp/xmtp-js";
 import { useUserData } from "../../userDataContext";
 import { MoonSigner } from '@moonup/ethers';
 
-const XMTPContext = createContext(null);
+// Update the context type definition
+const XMTPContext = createContext({
+  client: null,
+  conversation: null,
+  setConversation: (conversation: any | null) => {},
+});
 
 export const useXMTP = () => useContext(XMTPContext);
 
 export const XMTPProvider = ({ children }) => {
   const [client, setClient] = useState(null);
+  const [conversation, setConversation] = useState(null);
   const { userData } = useUserData();
 
   useEffect(() => {
     const initializeXMTP = async () => {
       if (!userData.address) return;
-      // Initialize XMTP client with appropriate signer
       const signer = new MoonSigner({
         rpcUrl: 'https://rpc.moonup.com',
       });
@@ -25,5 +30,11 @@ export const XMTPProvider = ({ children }) => {
     initializeXMTP();
   }, [userData.address]);
 
-  return <XMTPContext.Provider value={client}>{children}</XMTPContext.Provider>;
+  const updateConversation = (newConversation: any | null) => {
+    setConversation(newConversation);
+  };
+
+  const value = { client, conversation, setConversation: updateConversation };
+
+  return <XMTPContext.Provider value={value}>{children}</XMTPContext.Provider>;
 };

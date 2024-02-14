@@ -1,94 +1,212 @@
 'use client';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { Card, Text, Title, Flex, Grid, LineChart} from '@tremor/react';
-import Allergies from './allergies';
-import ChronicIllness from './chronicIlness';
-import MedicalRecords from './medicalRecords';
-import TestResults from './testResults';
-import Medications from './medications';
-import Appointments from './appointments';
-import PersonalInfo from './personalInfo';
-import Permissions from './permissions';
-
-const mockData = {
-  medicalRecords: [
-    { doctorName: 'Dr. John', date: '2024-01-01', time: '8:43 am', report: 'The patient refer cough for...' },
-    { doctorName: 'Dr. Smith', date: '2024-01-25', time: '1:43 pm', report: 'Patient has a history of pain in...' },
-    // Add more medical records as needed
-  ],
-  testResults: [
-    { date: '2024-01-01', results: ['Glucose: 110', 'Cholesterol: 200'] },
-    { date: '2024-02-02', results: ['Glucose: 125', 'Cholesterol: 180'] },
-    { date: '2024-02-03', results: ['Glucose: 160', 'Cholesterol: 152'] },
-    { date: '2024-02-04', results: ['Glucose: 150', 'Cholesterol: 130'] }
-  ],
-  allergies: ['Acetylsalicylic acid', 'Penicillin'],
-  chronicIllness: ['Diabetes', 'Hyperthyroidism'],
-  permissions: ['Dr. John', 'Dr. Smith'],
-  medications: ['Paracetamol', 'Ibuprofen'],
-  patient: {
-    Gender: 'Female',
-    Age: '56',
-    BloodType: 'A+',
-    Height: '1.65m',
-    Weight: '55kg'
-    // ... other patient info
-  },
-};
-
-const patientInfo = Object.entries(mockData.patient).map(([key, value]) => ({
-  name: key,
-  value: value,
-}));
-
-const data = [
-  {
-    category: 'Personal Info',
-    data: patientInfo,
-  },
-  {
-    category: 'Allergies',
-    data: mockData.allergies.map((allergy, index) => ({ name: `Allergy ${index + 1}`, value: allergy })),
-  },
-  {
-    category: 'Medications',
-    data: mockData.medications.map((medication, index) => ({ name: `Medication ${index + 1}`, value: medication })),
-  },
-  {
-    category: 'Chronic Illness',
-    data: mockData.chronicIllness.map((illness, index) => ({ name: `Illness ${index + 1}`, value: illness })),
-  },
-  {
-    category: 'Permissions',
-    data: mockData.permissions.map((permission, index) => ({ name: `Permission ${index + 1}`, value: permission })),
-  },
-  {
-    category: 'Test Results',
-    data: mockData.testResults.map((result, index) => ({
-      name: `Result ${index + 1}`,
-      value: `${result.date} = ${result.results.join(', ')}`,
-    })),
-  },
-  {
-    category: 'Medical Records',
-    // Transform medicalRecords to include doctorName, date, and report
-    data: mockData.medicalRecords.map((record, index) => ({
-      name: `Record ${index + 1}`,
-      value: record,
-    })),
-  }
-];
+import { useUserData } from '../userDataContext';
+import { ethers } from 'ethers';
+import { MoonProvider } from '@moonup/ethers';
+import { getDataFromIPFS } from '../ipfsHelia';
+import { decryptData } from '../encryptData';
+import appointmentContractABI from '../../../solidity/contracts/appointmentsContractABI.json';
+import mainContractABI from '../../../solidity/contracts/mainContractABI.json';
 
 export default function PatientDashboard() {
+  const [testResults, setTestResults] = useState([]);
+  const [medicalRecords, setMedicalRecords] = useState([]);
+  const [allergies, setAllergies] = useState([]);
+  const [chronicIllness, setChronicIllness] = useState([]);
+  const [medications, setMedications] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+  const [permissions, setPermissions] = useState([]);
+  const [value, setValue] = useState(null);
+
+  const mainContractAddress = process.env.REACT_APP_MAIN_CONTRACT_ADDRESS;
+  const appointmentContractAddress = process.env.REACT_APP_APPOINTMENT_CONTRACT_ADDRESS;
+  const userData = useUserData();
+
+  const provider = new MoonProvider({
+    rpcUrl: 'https://rpc.moonup.com',
+  });
+
+  const mainContract = new ethers.Contract(mainContractAddress, mainContractABI, provider);
+
+  const appointmentContract = new ethers.Contract(appointmentContractAddress, appointmentContractABI, provider);
+
+  useEffect(() => {
+    const fetchMedicalRecords = async () => {
+      try {
+        const records = await mainContract.getPatientMedicalRecords(userData.address);
+        const decrytedRecords = await Promise.all(records.map(async record => {
+          decryptData(getDataFromIPFS(record));
+        }))
+
+        const formattedRecords = decrytedRecords.map(async record => ({
+          doctorAddress: record.doctorAdress,
+          date: record.reportDate,
+          report: await decryptData(getDataFromIPFS(record.ipfsHash)),
+        }));
+
+        setMedicalRecords(formattedRecords);
+      } catch (error) {
+        console.error('Error fetching medical records:', error);
+      }
+    };
+
+    if (userData.address) {
+      fetchMedicalRecords();
+    }
+  }, [userData.address]);
+
+  useEffect(() => {
+    const fetchAllergies = async () => {
+      try {
+        const allergies = await mainContract.getPatientInfo(userData.address).allergies;
+        setAllergies(allergies);
+      } catch (error) {
+        console.error('Error fetching allergies:', error);
+      }
+    };
+
+    if (userData.address) {
+      fetchAllergies();
+    }
+  }, [userData.address]);
+
+  useEffect(() => {
+    const fetchChronicIllness = async () => {
+      try {
+        const illnesses = await mainContract.getPatientInfo(userData.address).preIllness;
+        setChronicIllness(illnesses);
+      } catch (error) {
+        console.error('Error fetching chronic illness:', error);
+      }
+    };
+
+    if (userData.address) {
+      fetchChronicIllness();
+    }
+  }, [userData.address]);
+
+  useEffect(() => {
+    const fetchMedications = async () => {
+      try {
+        const medications = await mainContract.getPatientInfo(userData.address).medications;
+        setMedications(medications);
+      } catch (error) {
+        console.error('Error fetching medications:', error);
+      }
+    };
+
+    if (userData.address) {
+      fetchMedications();
+    }
+  }, [userData.address]);
+  
+  useEffect(() => {
+    const fetchTestResults = async () => {
+      try {
+        const results = await mainContract.getPatientTestResults(userData.address);
+        const decrytedResults = await Promise.all(results.map(async result => {
+          decryptData(getDataFromIPFS(result));
+        }))
+
+        const formattedResults = decrytedResults.map(result => ({
+          date: result.date,
+          results: result.values.map(value => `${value.name}: ${value.level}`),
+        }));
+
+        setTestResults(formattedResults);
+      } catch (error) {
+        console.error('Error fetching test results:', error);
+      }
+    };
+
+    if (userData.address) {
+      fetchTestResults();
+    }
+  }, [userData.address]);
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        const appointments = await appointmentContract.getPatientAppointments();
+        setAppointments(appointments);
+      } catch (error) {
+        console.error('Error fetching appointments:', error);
+      }
+    };
+
+    if (userData.address) {
+      fetchAppointments();
+    }
+  }, [userData.address]);
+
+  useEffect(() => {
+    const fetchPermissions = async () => {
+      try {
+        const permissions = await mainContract.getPatientPermissions(userData.address);
+        setPermissions(permissions);
+      } catch (error) {
+        console.error('Error fetching permissions:', error);
+      }
+    };
+
+    if (userData.address) {
+      fetchPermissions();
+    }
+  }, [userData.address]);
+
+  // Create the data array dynamically based on fetched data
+  const data = [
+    {
+      category: 'Allergies',
+      data: allergies.map((allergy, index) => ({ name: `Allergy ${index + 1}`, value: allergy })),
+    },
+    {
+      category: 'Medications',
+      data: medications.map((medication, index) => ({ name: `Medication ${index + 1}`, value: medication })),
+    },
+    {
+      category: 'Chronic Illness',
+      data: chronicIllness.map((illness, index) => ({ name: `Illness ${index + 1}`, value: illness })),
+    },
+    {
+      category: 'Appointments',
+      data: appointments.map((appointment, index) => ({
+        name: `Appointment ${index + 1}`,
+        doctorAddress: appointment.doctorAddress, // Adjust as per your data structure
+        date: appointment.timestamp,
+        reason: appointment.reason,
+      })),
+    },
+    {
+      category: 'Permissions',
+      data: permissions.map((permission, index) => ({ name: `Permission ${index + 1}`, value: permission })),
+    },
+    {
+      category: 'Test Results',
+      data: testResults.map((result, index) => ({
+        name: `Result ${index + 1}`,
+        value: `${result.date} = ${result.results.join(', ')}`,
+      })),
+    },
+    {
+      category: 'Medical Records',
+      data: medicalRecords.map((record, index) => ({
+        name: `Record ${index + 1}`,
+        doctorAddress: record.doctorAddress, // Adjust as per your data structure
+        date: record.date,
+        report: record.report,
+      })),
+    },
+  ];
+
   // Transform testResults to match the expected data structure for the LineChart
-  const chartData = mockData.testResults.map(result => {
+  const chartData = testResults.map(result => {
     const date = result.date;
     const glucose = parseInt(result.results.find(r => r.startsWith('Glucose')).split(': ')[1], 10);
     const cholesterol = parseInt(result.results.find(r => r.startsWith('Cholesterol')).split(': ')[1], 10);
     return { date, glucose, cholesterol };
   });
-
-  const [value, setValue] = useState(null);
 
 
   return (
@@ -116,12 +234,6 @@ export default function PatientDashboard() {
                       <Text className="text-base text-white">{record.value.report}</Text>
                       {index < item.data.length - 1 && <hr className="my-2 border-white w-full" />}
                     </React.Fragment>
-                  ))}
-                </div>
-              ) : item.category === 'Personal Info' ? (
-                <div className="grid grid-cols-2 gap-4">
-                  {item.data.map((info, index) => (
-                    <Text key={index} className="text-base text-white">{`${info.name}: ${info.value}`}</Text>
                   ))}
                 </div>
               ) : (

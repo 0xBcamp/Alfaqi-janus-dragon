@@ -4,6 +4,7 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import SickIcon  from "@mui/icons-material/Sick";
 import NavigateNext from "@mui/icons-material/NavigateNext";
 import { useUserData } from "../userDataContext";
+import Link from "next/link";
 
 
 const HomePage: React.FC = () => {
@@ -138,7 +139,7 @@ const HomePage: React.FC = () => {
             startIcon={<NavigateNext />}
             size="large"
             style={buttonStyle}
-            onClick={() => "/login"}
+            onClick={() => href='/login' passHref></Link>}
           >
             Proceed
           </Button>

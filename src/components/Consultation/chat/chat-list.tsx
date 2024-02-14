@@ -5,7 +5,6 @@ import ChatBottombar from "./chat-bottombar";
 import { AnimatePresence, motion } from "framer-motion";
 import { useXMTP } from "./xmtpContext";
 import { fetchConversations } from "./xmtp";
-import { useUserData } from "../../userDataContext";
 
 interface ChatListProps {
   messages?: Message[];
@@ -17,7 +16,6 @@ interface ChatListProps {
 const ConversationsList = () => {
   const [conversations, setConversations] = useState([]);
   const xmtpClient = useXMTP();
-  const userData = useUserData();
 
   useEffect(() => {
     const loadConversations = async () => {

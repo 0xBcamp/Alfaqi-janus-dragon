@@ -4,6 +4,8 @@ import DoctorsList from './doctorsList';
 import { ethers } from 'ethers';
 import { MoonProvider, MoonSigner } from '@moonup/ethers';
 import { useUserData } from '../userDataContext';
+import appointmentContractABI from '../../../solidity/contracts/appointmentsContractABI.json'; // Import the contract ABI
+import mainContractABI from '../../../solidity/contracts/mainContractABI.json'; // Import the contract ABI
 
 const SearchDoctorsPage = () => {
   const [doctors, setDoctors] = useState([]);
@@ -11,9 +13,7 @@ const SearchDoctorsPage = () => {
   const userData = useUserData();
 
   // Assume you have your contract ABI and address available
-  const mainContractABI = mainContractABI; // json file
   const mainContractAddress = "MAIN_CONTRACT_ADDRESS"; // env variable
-  const appointmentContractABI = appointmentContractABI; // json file
   const appointmentContractAddress = "APPOINTMENT_CONTRACT_ADDRESS"; // env variable
 
   useEffect(() => {
@@ -71,7 +71,12 @@ const SearchDoctorsPage = () => {
       // Ensure parameters are correctly passed and used in the smart contract call
       const tx = await contract.requestAppointment(doctor.address, timestamp, reason);
       await tx.wait();
+      
+      const permission = await contract.grantPermissionToDoctor(userData.address, doctor.address);
+      await permission.wait();
+
       console.log('Appointment requested successfully.');
+
     } catch (error) {
       console.error('Error requesting appointment:', error);
     }
