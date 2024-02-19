@@ -4,11 +4,11 @@ import InputBase from '@mui/material/InputBase';
 
 // Doctor type definition remains the same
 type Doctor = {
-  id: string;
+  id: string; //address
   name: string;
   specialty: string;
   experience: string;
-  times: string[];
+  avaliability: string;
   emergency: boolean;
 };
 
@@ -35,7 +35,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onRequestAppointment })
       <Title className="text-lg font-bold">{doctor.name}</Title>
         <Text className="text-base">Specialty: {doctor.specialty}</Text>
         <Text className="text-base">Experience time: {doctor.experience}</Text>
-        <Text className="text-base">Available Times: {doctor.times.join(', ')}</Text>
+        <Text className="text-base">Available Times: {doctor.avaliability}</Text>
         {doctor.emergency && <Text className="text-red-500">Accepts Emergency Consultations</Text>}
       <InputBase
           placeholder="Appointment Timestamp"

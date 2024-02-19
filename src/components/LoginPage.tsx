@@ -128,9 +128,6 @@ const LoginPage: React.FC = () => {
 			};
 			console.log('Authenticating...');
 			const loginResponse: any = await auth.emailLogin(loginRequest);
-			// Update auth context to authenticated
-			login();
-			console.log('Authentication successful:', loginResponse);
 
 			// Set tokens and email
 			console.log('Updating tokens and email...');
@@ -149,6 +146,10 @@ const LoginPage: React.FC = () => {
 			console.log('Setting expiry and navigating...');
 			moon.MoonAccount.setExpiry(loginResponse.data.expiry);
 
+			// Update auth context to authenticated
+			login();
+			console.log('Authentication successful:', loginResponse);
+
 			// Update user data context with the email and address associated
 			updateEmail(email);
 			if ('address' in newAccount.data.data) {
@@ -157,9 +158,6 @@ const LoginPage: React.FC = () => {
 				console.error('Unexpected response structure:', newAccount);
 				// Handle the unexpected structure appropriately
 			  }
-
-			// Update the AuthContext with the user data
-
 			
 			// Send the user to the dashboard according to the user data
 			console.log('Navigating to dashboard...');
