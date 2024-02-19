@@ -2,6 +2,9 @@ import SearchDoctorsPage from "../../components/SearchDoctors/searchDoctors";
 import Image from "next/image";
 import bgImage from "../../public/bg1.svg";
 
+require('events').EventEmitter.setMaxListeners = 30;
+
+
 export default () => {
   return (
     <div className="p-4">

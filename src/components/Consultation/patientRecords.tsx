@@ -9,11 +9,17 @@ import { ethers } from 'ethers';
 const PatientRecords = () => {
   const userData = useUserData();
   const [records, setRecords] = useState([]);
+  const [provider, setProvider] = useState(null);
+  const mainContractAddress = process.env.NEXT_PUBLIC_MAIN_CONTRACT_ADDRESS;  
 
-  // Retrieve the main contract address from the environment
-  const mainContractAddress = process.env.REACT_APP_MAIN_CONTRACT_ADDRESS;
-  
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  useEffect(() => {
+    const fetchProvider = async () => {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      setProvider(provider);
+    };
+
+    fetchProvider();
+  }, []);
 
   const mainContract = new ethers.Contract(mainContractAddress, mainContractABI, provider);
 

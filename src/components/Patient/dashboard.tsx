@@ -16,13 +16,20 @@ export default function PatientDashboard() {
   const [medications, setMedications] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [permissions, setPermissions] = useState([]);
+  const [provider, setProvider] = useState(null);
   const [value, setValue] = useState(null);
-
-  const mainContractAddress = process.env.REACT_APP_MAIN_CONTRACT_ADDRESS;
-  const appointmentContractAddress = process.env.REACT_APP_APPOINTMENT_CONTRACT_ADDRESS;
   const userData = useUserData();
 
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const mainContractAddress = process.env.NEXT_PUBLIC_MAIN_CONTRACT_ADDRESS;
+  const appointmentContractAddress = process.env.NEXT_PUBLIC_APPOINTMENT_CONTRACT_ADDRESS;  
+
+  useEffect(() => {
+    const fetchProvider = async () => {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      setProvider(provider);
+    };
+    fetchProvider();
+  }, []);
 
   const mainContract = new ethers.Contract(mainContractAddress, mainContractABI, provider);
 

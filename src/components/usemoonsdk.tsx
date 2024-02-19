@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 export const useMoonSDK = () => {
 	const [moon, setMoon] = useState<MoonSDK | null>(null);
-
+	
 	const initialize = async () => {
 		const moonInstance = new MoonSDK({
 			Storage: {
