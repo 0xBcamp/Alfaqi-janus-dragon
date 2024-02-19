@@ -2,7 +2,9 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Title, Flex, Grid, Select, LineChart } from '@tremor/react';
 import { useUserData } from '../userDataContext';
-import { MoonProvider, MoonSigner } from '@moonup/ethers';
+import { MoonSigner } from '@moonup/ethers';
+import { MoonSDK } from '@moonup/ethers/node_modules/@moonup/moon-sdk/';
+import { useMoonSDK } from '../usemoonsdk';
 import { ethers } from 'ethers';
 import { getDataFromIPFS } from '../ipfsHelia';
 import { decryptData } from '../encryptData';
@@ -11,7 +13,8 @@ import mainContractABI from '../../../solidity/contracts/mainContractABI.json';
 import { newConversation } from "../Consultation/chat/xmtp";
 import { useXMTP } from '../Consultation/chat/xmtpContext';
 
-export default function DoctorDashboard() {
+
+export default async function DoctorDashboard() {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [confirmedAppointments, setConfirmedAppointments] = useState([]);
   const [appointmentRequests, setAppointmentRequests] = useState([]);
@@ -19,15 +22,17 @@ export default function DoctorDashboard() {
   const appointmentContractAddress = process.env.REACT_APP_APPOINTMENT_CONTRACT_ADDRESS;
   const userData = useUserData();
   const { client, setConversation } = useXMTP();
+  const moonSDKHook = useMoonSDK();
 
-  
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signerAddress = await provider.getSigner().getAddress();
+  const chainId = (await provider.getNetwork()).chainId.toString();
 
-  const provider = new MoonProvider({
-    rpcUrl: 'https://rpc.moonup.com',
-  });
-
+  // Now we use the moon instance directly from moonSDKHook
   const signer = new MoonSigner({
-    rpcUrl: 'https://rpc.moonup.com',
+    SDK: moonSDKHook.moon as unknown as MoonSDK,
+    address: signerAddress,
+    chainId,
   });
 
   const mainContractProvider = new ethers.Contract(mainContractAddress, mainContractABI, provider);
@@ -37,12 +42,12 @@ export default function DoctorDashboard() {
   const appointmentContractSigner = new ethers.Contract(appointmentContractAddress, appointmentContractABI, signer);
 
   const personalData = {
-    Name: mainContractProvider.getDoctorInfo(userData.address).name,
-    Email: mainContractProvider.getDoctorInfo(userData.address).email,
-    Specialty: mainContractProvider.getDoctorInfo(userData.address).specialty,
-    Experience: mainContractProvider.getDoctorInfo(userData.address).timeExperience,
-    Emergency: mainContractProvider.getDoctorInfo(userData.address).emergencyAppointment,
-    Availability: mainContractProvider.getDoctorInfo(userData.address).availableTime
+    Name: mainContractProvider.getDoctorInfo(userData.userData.address).name,
+    Email: mainContractProvider.getDoctorInfo(userData.userData.address).email,
+    Specialty: mainContractProvider.getDoctorInfo(userData.userData.address).specialty,
+    Experience: mainContractProvider.getDoctorInfo(userData.userData.address).timeExperience,
+    Emergency: mainContractProvider.getDoctorInfo(userData.userData.address).emergencyAppointment,
+    Availability: mainContractProvider.getDoctorInfo(userData.userData.address).availableTime
   };
 
   const personalDataEntries = Object.entries(personalData).map(([key, value]) => ({
@@ -68,7 +73,7 @@ export default function DoctorDashboard() {
 
     fetchAppointments();
 
-  }, [userData.address]);
+  }, [userData.userData.address]);
 
 
   // Simulated function to get chart data for the selected patient
@@ -155,7 +160,7 @@ export default function DoctorDashboard() {
           <Card key={index} className={`p-4 ${item.category === 'Medical Records' ? 'col-span-2' : 'col-span-1'} bg-gray-800`}>
             <Title className="text-lg font-bold text-white">{item.category}</Title>
             <hr className="my-2 border-white" />
-            <Flex flexDirection="column" gap="2" className="mt-4">
+            <Flex className="flex flex-col gap-2 mt-4">
               {item.category === 'Medical Records' ? (
                 <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
                   {item.data.map(async (record, index) => (
@@ -204,17 +209,17 @@ export default function DoctorDashboard() {
         ))}
         <Card className="col-span-2 p-4 bg-gray-800">
           <Title className="text-lg font-bold text-white">Patient Health Overview</Title>
-          <Select className="mt-4" value={selectedPatient} onChange={(e) => setSelectedPatient(e.target.value)}>
-            {Data.patients.map((patient, index) => (
+          <Select className="mt-4" value={selectedPatient} onChange={(e) => setSelectedPatient(e.target)}>
+            {activePatients.map((patient, index) => (
               <option key={index} value={patient}>{patient}</option>
             ))}
           </Select>
           <LineChart
             className="h-72 mt-4"
             data={chartData}
-            indexBy="date"
-            keys={['glucose', 'cholesterol']}
-            margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
+            index="date"
+            categories={['glucose', 'cholesterol']}
+            yAxisWidth={20}
             // Other necessary props for your chart configuration
           />
         </Card>

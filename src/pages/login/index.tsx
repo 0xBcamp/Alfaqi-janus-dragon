@@ -1,10 +1,24 @@
 import LoginPage from "../../components/LoginPage";
-import Layout from "./layout";
+import Layout from "../../components/LoginLayout";
 import { Box, Grid } from "@mui/material";
+import Image from "next/image";
 import TitleBox from "../../components/TitleBox";
+import bgImage from "../../public/bg1.svg";
+
 
 export default () => {
   return (
+    <div className="p-4">
+      <Image
+        src={bgImage}
+        alt="background"
+        fill
+        sizes="100vw"
+        style={{
+          objectFit: "cover",
+          zIndex: -1,
+        }}
+      />
     <Layout>
       <Box
         sx={{
@@ -26,5 +40,6 @@ export default () => {
         {/* GRID SYSTEM END */}
       </Box>
     </Layout>
+  </div>
   );
 };

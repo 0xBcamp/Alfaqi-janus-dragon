@@ -15,6 +15,19 @@ export const useMoonSDK = () => {
 			Auth: {
 				AuthType: AUTH.JWT,
 			},
+			Networks: [
+				{
+					chainId: '43113',
+					chainName: 'Avalanche Fuji Testnet',
+					nativeCurrency: {
+						name: 'Avalanche',
+						symbol: 'AVAX',
+						decimals: 18,
+					},
+					rpcUrls: ['https://api.avax-test.network/ext/bc/C/rpc'],
+					blockExplorerUrls: ['https://testnet.snowtrace.io'],
+				},
+			],
 		});
 		setMoon(moonInstance);
 		moonInstance.connect();

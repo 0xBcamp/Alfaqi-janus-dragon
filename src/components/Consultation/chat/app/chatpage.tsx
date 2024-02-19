@@ -16,7 +16,7 @@ export default function Chat() {
       </div>
 
       <div className="flex justify-between max-w-5xl w-full items-start text-xs md:text-sm text-muted-foreground ">
-      <p className="max-w-[150px] sm:max-w-lg">Your messages here are safe.<a className="font-semibold"> You are on a decentralized enviroment.</a></p>
+      <p className="max-w-[150px] sm:max-w-lg">Your messages here are safe.<a className="font-semibold"> You are on a decentralized enviroment.<br/></a></p>
       <p className="max-w-[150px] sm:max-w-lg">UI forked from @shadcn-chat</p>
       </div>
     </main>

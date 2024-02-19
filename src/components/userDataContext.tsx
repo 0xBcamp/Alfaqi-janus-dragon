@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 interface UserData {
   isDoctor: boolean | null;
   isPatient: boolean | null;
-  alias: string;
+  alias: string ;
   address: string | null;
   email: string | null;
 }

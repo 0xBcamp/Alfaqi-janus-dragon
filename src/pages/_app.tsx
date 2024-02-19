@@ -11,16 +11,17 @@ import NavBar from "../components/navBar";
 const App = ({ Component, pageProps }: AppProps) => {
   return (
     <LayoutProvider>
+    <UserDataProvider>
     <Provider store={store}>
       <AuthProvider>
-        <UserDataProvider>
+        
           <div className="flex">
             <NavBar />
             <Component {...pageProps} />
           </div>
-        </UserDataProvider>
       </AuthProvider>
     </Provider>
+    </UserDataProvider>
     </LayoutProvider>
   );
 };

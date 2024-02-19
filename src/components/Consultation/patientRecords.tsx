@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useUserData } from '../userDataContext';
 import { getDataFromIPFS } from '../ipfsHelia';
 import { decryptData } from '../encryptData';
 import mainContractABI from '../../../solidity/contracts/mainContractABI.json';
 import { ethers } from 'ethers';
-import { MoonProvider } from '@moonup/ethers';
 
 
 const PatientRecords = () => {
@@ -14,16 +13,14 @@ const PatientRecords = () => {
   // Retrieve the main contract address from the environment
   const mainContractAddress = process.env.REACT_APP_MAIN_CONTRACT_ADDRESS;
   
-  const provider = new MoonProvider({
-    rpcUrl: 'https://rpc.moonup.com',
-  });
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
 
   const mainContract = new ethers.Contract(mainContractAddress, mainContractABI, provider);
 
   useEffect(() => {
     const fetchRecords = async () => {
       try {
-        const records = await mainContract.getPatientMedicalRecords(userData.address);
+        const records = await mainContract.getPatientMedicalRecords(userData.userData.address);
         const formattedRecords = records.map(async record => {
           const doctorName = await mainContract.getDoctorName(record.doctorAddress);
           return {
@@ -40,10 +37,10 @@ const PatientRecords = () => {
       }
     };
 
-    if (userData.address) {
+    if (userData.userData.address) {
       fetchRecords();
     }
-  }, [userData.address]);
+  }, [userData.userData.address]);
 
   return (
     <div className="p-4">

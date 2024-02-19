@@ -5,6 +5,7 @@ import ChatBottombar from "./chat-bottombar";
 import { AnimatePresence, motion } from "framer-motion";
 import { useXMTP } from "./xmtpContext";
 import { fetchConversations } from "./xmtp";
+import { useUserData } from "../../userDataContext";
 
 interface ChatListProps {
   messages?: Message[];
@@ -16,6 +17,7 @@ interface ChatListProps {
 const ConversationsList = () => {
   const [conversations, setConversations] = useState([]);
   const xmtpClient = useXMTP();
+  const userData = useUserData(); 
 
   useEffect(() => {
     const loadConversations = async () => {
@@ -38,16 +40,16 @@ const ConversationsList = () => {
     </div>
   );
 };
-
 export function ChatList({
   messages,
   selectedUser,
-  sendMessage,
-  isMobile
+  sendMessage, // This is the function you're currently passing down
+  isMobile,
 }: ChatListProps) {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const { userData } = useUserData();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTop =
         messagesContainerRef.current.scrollHeight;
@@ -92,7 +94,11 @@ export function ChatList({
           ))}
         </AnimatePresence>
       </div>
-      <ChatBottombar sendMessage={sendMessage} selectedUserAddress={selectedUser.address} isMobile={isMobile}/>
+      <ChatBottombar 
+        updateMessagesUI={sendMessage}
+        selectedUserAddress={selectedUser.address}
+        isMobile={isMobile}
+      />
     </div>
   );
 }

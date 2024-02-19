@@ -8,6 +8,7 @@ export default () => {
     <div className="p-4">
       <Image 
         src={bgImage}
+        alt="background"
         fill
         sizes="100vw"
         style={{

@@ -59,7 +59,7 @@ async function fetchConversations (xmtpClient) {
   }
 }
 
-// Create remote attachment
+/* // Create remote attachment
 // image is the uploaded event.target.files[0];
 async function createRemoteAttachment(image) {
   const data = await new Promise((resolve, reject) => {
@@ -119,6 +119,6 @@ async function receiveAttachment (message) {
   if (message.contentType.sameAs(ContentTypeRemoteAttachment)) {
     const attachment = await RemoteAttachmentCodec.load(message.content, client);
   }
-}
+} */
 
-export { canMessage, newConversation, sendMessage, streamMessages, fetchConversations, createRemoteAttachment, sendAttachment, receiveAttachment };
+export { canMessage, newConversation, sendMessage, streamMessages, fetchConversations };

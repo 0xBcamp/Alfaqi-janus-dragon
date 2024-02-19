@@ -1,9 +1,11 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { useMoonSDK } from "./usemoonsdk";
+import { useUserData } from "./userDataContext";
 
 // Adjusting the AuthContextType to include login and logout functions
 interface AuthContextType {
   isAuthenticated: boolean;
+  role: string;
   login: () => void;
   logout: () => void;
 }
@@ -33,10 +35,11 @@ export const useAuth = (): AuthContextType => {
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [role, setRole] = useState<string>('');
+  const { userData } = useUserData();
 
   const login = () => {
-    setIsAuthenticated(true); // Properly update state
-    // Assuming userData has properties isDoctor and isPatient to determine the role
+    setIsAuthenticated(true);
+    userData.isDoctor ? setRole("doctor") : setRole("patient");
   };
 
   const logout = () => {

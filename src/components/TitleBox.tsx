@@ -1,12 +1,12 @@
 import { Box, Typography, Grid } from "@mui/material";
 import React from 'react';
 
-const textStyle = {
+const textStyle : React.CSSProperties = {
   color: "white", // Ensures text color is white
   textAlign: "center", // Centers the text
   width: "100%", // Ensures the text spans the full width of its container
   textShadow: "2px 2px 4px #000000",
-  fontweight: "bold"
+  fontWeight: "bold"
 };
 
 

@@ -3,7 +3,6 @@ import React, {useEffect, useState} from 'react';
 import { Card, Text, Title, Flex, Grid, LineChart} from '@tremor/react';
 import { useUserData } from '../userDataContext';
 import { ethers } from 'ethers';
-import { MoonProvider } from '@moonup/ethers';
 import { getDataFromIPFS } from '../ipfsHelia';
 import { decryptData } from '../encryptData';
 import appointmentContractABI from '../../../solidity/contracts/appointmentsContractABI.json';
@@ -23,9 +22,7 @@ export default function PatientDashboard() {
   const appointmentContractAddress = process.env.REACT_APP_APPOINTMENT_CONTRACT_ADDRESS;
   const userData = useUserData();
 
-  const provider = new MoonProvider({
-    rpcUrl: 'https://rpc.moonup.com',
-  });
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
 
   const mainContract = new ethers.Contract(mainContractAddress, mainContractABI, provider);
 
@@ -34,7 +31,7 @@ export default function PatientDashboard() {
   useEffect(() => {
     const fetchMedicalRecords = async () => {
       try {
-        const records = await mainContract.getPatientMedicalRecords(userData.address);
+        const records = await mainContract.getPatientMedicalRecords(userData.userData.address);
         const decrytedRecords = await Promise.all(records.map(async record => {
           decryptData(getDataFromIPFS(record));
         }))
@@ -51,60 +48,60 @@ export default function PatientDashboard() {
       }
     };
 
-    if (userData.address) {
+    if (userData.userData.address) {
       fetchMedicalRecords();
     }
-  }, [userData.address]);
+  }, [userData.userData.address]);
 
   useEffect(() => {
     const fetchAllergies = async () => {
       try {
-        const allergies = await mainContract.getPatientInfo(userData.address).allergies;
+        const allergies = await mainContract.getPatientInfo(userData.userData.address).allergies;
         setAllergies(allergies);
       } catch (error) {
         console.error('Error fetching allergies:', error);
       }
     };
 
-    if (userData.address) {
+    if (userData.userData.address) {
       fetchAllergies();
     }
-  }, [userData.address]);
+  }, [userData.userData.address]);
 
   useEffect(() => {
     const fetchChronicIllness = async () => {
       try {
-        const illnesses = await mainContract.getPatientInfo(userData.address).preIllness;
+        const illnesses = await mainContract.getPatientInfo(userData.userData.address).preIllness;
         setChronicIllness(illnesses);
       } catch (error) {
         console.error('Error fetching chronic illness:', error);
       }
     };
 
-    if (userData.address) {
+    if (userData.userData.address) {
       fetchChronicIllness();
     }
-  }, [userData.address]);
+  }, [userData.userData.address]);
 
   useEffect(() => {
     const fetchMedications = async () => {
       try {
-        const medications = await mainContract.getPatientInfo(userData.address).medications;
+        const medications = await mainContract.getPatientInfo(userData.userData.address).medications;
         setMedications(medications);
       } catch (error) {
         console.error('Error fetching medications:', error);
       }
     };
 
-    if (userData.address) {
+    if (userData.userData.address) {
       fetchMedications();
     }
-  }, [userData.address]);
+  }, [userData.userData.address]);
   
   useEffect(() => {
     const fetchTestResults = async () => {
       try {
-        const results = await mainContract.getPatientTestResults(userData.address);
+        const results = await mainContract.getPatientTestResults(userData.userData.address);
         const decrytedResults = await Promise.all(results.map(async result => {
           decryptData(getDataFromIPFS(result));
         }))
@@ -120,10 +117,10 @@ export default function PatientDashboard() {
       }
     };
 
-    if (userData.address) {
+    if (userData.userData.address) {
       fetchTestResults();
     }
-  }, [userData.address]);
+  }, [userData.userData.address]);
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -135,25 +132,25 @@ export default function PatientDashboard() {
       }
     };
 
-    if (userData.address) {
+    if (userData.userData.address) {
       fetchAppointments();
     }
-  }, [userData.address]);
+  }, [userData.userData.address]);
 
   useEffect(() => {
     const fetchPermissions = async () => {
       try {
-        const permissions = await mainContract.getPatientPermissions(userData.address);
+        const permissions = await mainContract.getPatientPermissions(userData.userData.address);
         setPermissions(permissions);
       } catch (error) {
         console.error('Error fetching permissions:', error);
       }
     };
 
-    if (userData.address) {
+    if (userData.userData.address) {
       fetchPermissions();
     }
-  }, [userData.address]);
+  }, [userData.userData.address]);
 
   // Create the data array dynamically based on fetched data
   const data = [
@@ -222,7 +219,7 @@ export default function PatientDashboard() {
               <Title className="text-lg font-bold text-white">{item.category}</Title>
               <hr className="my-2 border-white" /> {/* Add hr after each category title */}
             </div>
-            <Flex flexDirection="column" gap="2" className="mt-4">
+            <Flex className="flex flex-col gap-2 mt-4">
               {item.category === 'Medical Records' ? (
                 <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
                   {item.data.map((record, index) => (
@@ -258,7 +255,6 @@ export default function PatientDashboard() {
           data={chartData}
           index="date"
           categories={['glucose', 'cholesterol']}
-          showXAxisoptional={true}
           showAnimation={true}
           yAxisWidth={30}
           onValueChange={(v) => setValue(v)}

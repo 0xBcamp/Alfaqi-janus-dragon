@@ -8,6 +8,7 @@ import { startStream, playStream, terminateStream } from '../../livepeer';
 import { Message } from './app/data';
 import { useUserData } from '../../userDataContext';
 import { sendMessage } from './xmtp';
+import { useXMTP } from './xmtpContext';
 
 interface ChatTopbarProps {
   selectedUser: UserData;
@@ -17,26 +18,28 @@ export const TopbarIcons = [{ icon: Video }, { icon: Info }];
 
 export default function ChatTopbar({ selectedUser }: ChatTopbarProps) {
   const userData = useUserData();
+  const { conversation } = useXMTP();
 
-  const handleVideoCall = async () => { // Mark this function as async
+  const handleVideoCall = async () => {
     try {
       console.log("Starting stream");
       const stream = await startStream("testStream", false);
-
+  
       if (stream) {
         console.log("Playing stream");
+        // Directly access playbackId on the stream object
         const streamPlayer = await playStream('TestStream', stream.playbackId);
         // Sends a link with the playbackId to the other user on the chat
         const message = `Hey, let's start a video call! Click here to join: https://livepeer.studio/api/playback/${stream.playbackId}`;
         const newMessage: Message = {
-          id: Date.now(), // Updated ID generation to use timestamp
-          name: userData.alias,
+          id: Date.now(),
+          name: userData.userData.alias,
           message: message.trim(),
-          senderAddress: userData.address,
+          senderAddress: userData.userData.address,
         };
-
+  
+        // Assuming you have a way to specify the conversation context
         sendMessage(conversation, newMessage); 
-
       } else {
         console.error("Error starting stream");
       }

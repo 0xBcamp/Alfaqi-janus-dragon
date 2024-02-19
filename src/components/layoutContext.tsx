@@ -1,8 +1,19 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-const LayoutContext = createContext();
+interface LayoutContextType {
+  layout: any;
+  setLayout: (layout: any) => void;
+}
 
-export const useLayout = () => useContext(LayoutContext);
+const LayoutContext = createContext<LayoutContextType | undefined>(undefined);
+
+export const useLayout = (): LayoutContextType => {
+  const context = useContext(LayoutContext);
+  if (context === undefined) {
+    throw new Error('useLayout must be used within a LayoutProvider');
+  }
+  return context;
+};
 
 export const LayoutProvider = ({ children }) => {
   const [layout, setLayout] = useState();

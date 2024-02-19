@@ -3,6 +3,7 @@ import Link from "next/link";
 import colorConfigs from "./configs/colorConfigs";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import { RouteType } from "../routes/config";
 
 type Props = {
   item: RouteType;

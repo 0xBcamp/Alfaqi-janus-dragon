@@ -4,24 +4,19 @@ import Link from "next/link";
 import { MoreHorizontal, SquarePen } from "lucide-react";
 import { cn } from "./lib/utils";
 import { buttonVariants } from "./ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-  TooltipProvider,
-} from "./ui/tooltip";
 
-// Assuming ConversationType matches the structure you get from XMTP or your application's state management
+// ConversationType must matches the structure from XMTP
 interface ConversationType {
   peerAddress: string; // Unique identifier for the conversation
+  conversationId: string; // Unique identifier for the conversation
   lastMessage?: string; // Last message text for preview (optional)
 }
 
 interface SidebarProps {
   isCollapsed: boolean;
   conversations: ConversationType[];
-  onSelectConversation: (peerAddress: string) => void; // Function to handle selecting a conversation
-  selectedPeerAddress?: string; // Currently selected conversation's peer address for highlighting
+  onSelectConversation: (peerAddress: string) => void;
+  selectedUser: string | null;
   isMobile: boolean;
 }
 
@@ -29,7 +24,7 @@ export function Sidebar({
   conversations,
   isCollapsed,
   onSelectConversation,
-  selectedPeerAddress,
+  selectedUser, // New prop to hold the selected user address
   isMobile,
 }: SidebarProps) {
   return (
@@ -58,9 +53,9 @@ export function Sidebar({
         {conversations.map((conversation, index) => (
           <Link key={index} href="#" onClick={() => onSelectConversation(conversation.peerAddress)}
                 className={cn(
-                  buttonVariants({ variant: selectedPeerAddress === conversation.peerAddress ? "grey" : "ghost", size: "xl" }),
+                  buttonVariants({ variant: selectedUser === conversation.peerAddress ? "grey" : "ghost", size: "xl" }),
                   "flex items-center gap-4 p-2 cursor-pointer",
-                  selectedPeerAddress === conversation.peerAddress && "bg-gray-200 dark:bg-gray-700"
+                  selectedUser === conversation.peerAddress && "bg-gray-200 dark:bg-gray-700"
                 )}
           >
             <div className="flex flex-col">

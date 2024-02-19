@@ -88,6 +88,7 @@ export function ChatLayout({
       <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
         {selectedUser && (
           <Chat
+            messages={[]} // Pass messages here
             selectedUser={selectedUser}
             isMobile={isMobile}
           />

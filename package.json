@@ -17,6 +17,7 @@
     "@emoji-mart/react": "^1.1.1",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
+    "@ethersproject/providers": "^5.7.2",
     "@headlessui/react": "^1.7.18",
     "@headlessui/tailwindcss": "^0.2.0",
     "@helia/dag-cbor": "^3.0.0",

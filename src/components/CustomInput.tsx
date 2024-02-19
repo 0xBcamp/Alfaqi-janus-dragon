@@ -7,7 +7,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import { colors } from "../pages/theme";
+import { colors } from "../components/LoginTheme";
 import React, { useState } from "react";
 
 const CustomInput: React.FC<{

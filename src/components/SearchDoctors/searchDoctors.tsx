@@ -2,27 +2,30 @@ import React, { useState, useEffect } from 'react';
 import SearchFilters from './searchFilters';
 import DoctorsList from './doctorsList';
 import { ethers } from 'ethers';
-import { MoonProvider, MoonSigner } from '@moonup/ethers';
+import { MoonSigner } from '@moonup/ethers';
+import { MoonSDK } from '@moonup/ethers/node_modules/@moonup/moon-sdk/';
 import { useUserData } from '../userDataContext';
 import appointmentContractABI from '../../../solidity/contracts/appointmentsContractABI.json'; // Import the contract ABI
 import mainContractABI from '../../../solidity/contracts/mainContractABI.json'; // Import the contract ABI
+import { useMoonSDK } from '../usemoonsdk';
 
-const SearchDoctorsPage = () => {
+const SearchDoctorsPage = async () => {
   const [doctors, setDoctors] = useState([]);
   const [searchParams, setSearchParams] = useState({ specialty: '', emergency: '' });
-  const userData = useUserData();
+  const { userData } = useUserData();
+  const moonSDKHook = useMoonSDK();
+
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signerAddress = await provider.getSigner().getAddress();
+  const chainId = (await provider.getNetwork()).chainId.toString();
 
   // Assume you have your contract ABI and address available
-  const mainContractAddress = "MAIN_CONTRACT_ADDRESS"; // env variable
-  const appointmentContractAddress = "APPOINTMENT_CONTRACT_ADDRESS"; // env variable
+  const mainContractAddress = process.env.MAIN_CONTRACT_ADDRESS; // env variable
+  const appointmentContractAddress = process.env.APPOINTMENT_CONTRACT_ADDRESS; // env variable
 
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const provider = new MoonProvider({
-          rpcUrl: 'https://rpc.moonup.com',
-        });
-        
         const contract = new ethers.Contract(mainContractAddress, mainContractABI, provider);
 
         // Fetch all doctors from the contract
@@ -51,9 +54,12 @@ const SearchDoctorsPage = () => {
   
   // Initialize appointments contract
   const initAppointmentsContract = () => {
-    const signer = new MoonSigner({
-      rpcUrl: 'https://rpc.moonup.com',
-    });
+      // Now we use the moon instance directly from moonSDKHook
+      const signer = new MoonSigner({
+        SDK: moonSDKHook.moon as unknown as MoonSDK,
+        address: signerAddress,
+        chainId,
+      });
     const contract = new ethers.Contract(appointmentContractAddress, appointmentContractABI, signer);
     return contract;
     };

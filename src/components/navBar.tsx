@@ -12,14 +12,16 @@ import colorConfigs from "./configs/colorConfigs";
 import sizeConfigs from "./configs/sizeConfigs";
 import appRoutes from ".././routes/appRoutes";
 import NavBarItem from "./navBarItem";
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const NavBar = () => {
-  const { user, logout } = useAuth(); // Correctly access the logout function
+  const { role, logout } = useAuth(); // Correctly access the logout function
 
   const filteredRoutes = appRoutes.filter((route) => {
-    if (user && route.role.includes(user.role)) return true;
-    if (!user) return true;
-    return false;
+    // If the route does not specify a role, it's always visible
+    if (!route.role) return true;
+    // If the route specifies a role, make it visible only to users with that role
+    return route.role.includes(role);
   });
 
   return (
@@ -51,12 +53,12 @@ const NavBar = () => {
           {filteredRoutes.map((route, index) => (
             <NavBarItem item={route} key={index} />
           ))}
-          {user && (
+          {role && (
             <ListItemButton
               onClick={logout}
               sx={{ paddingY: "12px", paddingX: "24px" }}
             >
-              Logout {/* Ideally, include an icon here */}
+              Logout {role} <LogoutIcon sx={{ marginLeft: "8px" }} />
             </ListItemButton>
           )}
         </List>

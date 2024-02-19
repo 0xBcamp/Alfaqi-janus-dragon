@@ -35,14 +35,14 @@ export default function ChatBottombar({
   const [message, setMessage] = useState("");
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { userData } = useUserData();
-  const { xmtpClient } = useXMTP();
+  const { client } = useXMTP();
 
   const handleSend = async () => {
     if (message.trim()) {
       // Check if there's an existing conversation or create a new one
-      let conversation = await xmtpClient.conversations.getConversation(selectedUserAddress);
+      let conversation = await client.conversations.getConversation(selectedUserAddress);
       if (!conversation) {
-        conversation = await newConversation(xmtpClient, selectedUserAddress);
+        conversation = await newConversation(client, selectedUserAddress);
       }
 
       // Send the message through XMTP
@@ -65,9 +65,9 @@ export default function ChatBottombar({
       message: "👍",
       senderAddress: userData.address,
     };
-    let conversation = await xmtpClient.conversations.getConversation(selectedUserAddress);
+    let conversation = await client.conversations.getConversation(selectedUserAddress);
     if (!conversation) {
-      conversation = await newConversation(xmtpClient, selectedUserAddress);
+      conversation = await newConversation(client, selectedUserAddress);
     }
     // Send the message through XMTP
     const sentMessage = await sendMessage(conversation, newMessage);

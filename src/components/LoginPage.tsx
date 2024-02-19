@@ -22,7 +22,7 @@ const LoginPage: React.FC = () => {
 	const [error, setError] = useState('');
 
 	// Authentication context
-	const { login, isAuthenticated } = useAuth();
+	const { login } = useAuth();
 
 	// User data context
 	const { userData, setUserData }: { userData: any, setUserData: any } = useUserData();
@@ -151,12 +151,30 @@ const LoginPage: React.FC = () => {
 
 			// Update user data context with the email and address associated
 			updateEmail(email);
-			updateAddress(newAccount.data.data.address);
+			if ('address' in newAccount.data.data) {
+				updateAddress(newAccount.data.data.address);
+			  } else {
+				console.error('Unexpected response structure:', newAccount);
+				// Handle the unexpected structure appropriately
+			  }
 
-			// Send the user to the dashboard
+			// Update the AuthContext with the user data
+
+			
+			// Send the user to the dashboard according to the user data
 			console.log('Navigating to dashboard...');
+			if (userData.isDoctor) {
+				window.alert('Sign in successful! Redirecting to dashboard...');
+				window.location.href = '/doctor';
+			} else if (userData.isPatient) {
+				window.alert('Sign in successful! Redirecting to dashboard...');
+				window.location.href = '/patient';
+			} else {
+				// Show success message popup and redirect to home
+				window.alert('Sign in successful! Redirecting to home...');
+				window.location.href = '/home';
+			}
 
-			console.log('Authenticated Address:', newAccount.data.data.address);
 		} catch (error) {
 			console.error('Error during sign-in:', error);
 			setError('Error signing in. Please try again.');

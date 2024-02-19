@@ -1,7 +1,6 @@
 import { Box, ThemeProvider } from "@mui/material";
-import { theme } from "./theme";
-
-const bgImage = require(".././assets/bg.png");
+import { theme } from "./LoginTheme";
+import bgImage from '../pages/assets/bg.png';
 
 const Layout: React.FC<{ children: JSX.Element | JSX.Element[] }> = ({
   children,
@@ -11,7 +10,7 @@ const Layout: React.FC<{ children: JSX.Element | JSX.Element[] }> = ({
       <Box
         sx={{
           backgroundImage: `url(${bgImage})`,
-          backgroundRepeat: "no-repeat",
+          backgroundRepeat: "vertical",
           backgroundSize: "cover",
           backgroundPosition: "center",
           overflow: "hidden",

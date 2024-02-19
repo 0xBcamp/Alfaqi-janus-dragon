@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button, Box, Typography, Card, InputBase } from "@mui/material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import SickIcon  from "@mui/icons-material/Sick";
@@ -8,14 +8,14 @@ import Link from "next/link";
 
 
 const HomePage: React.FC = () => {
-  const buttonStyle = {
+  const buttonStyle : React.CSSProperties = {
     backgroundColor: "#233044",
     color: "white",
     fontSize: "1.25rem", // Increase font size for better visibility
     padding: "10px 24px", // Increase padding for a larger button
   };
 
-  const cardStyleTitles = {
+  const cardStyleTitles : React.CSSProperties = {
     backgroundColor: "#2C3E50", // Darker shade for contrast
     color: "white",
     padding: "20px", // Add some padding inside the card
@@ -23,7 +23,7 @@ const HomePage: React.FC = () => {
     margin: "20px", // Add margin around the card for spacing
   };
 
-  const cardStyle = {
+  const cardStyle : React.CSSProperties = {
     backgroundColor: "#2C3E50", // Darker shade for contrast
     color: "white",
     padding: "20px", // Add some padding inside the card
@@ -33,7 +33,7 @@ const HomePage: React.FC = () => {
     margin: "20px", // Add margin around the card for spacing
   };
 
-  const textStyle = {
+  const textStyle : React.CSSProperties = {
     color: "white", // Ensures text color is white
     textAlign: "center", // Centers the text
     width: "100%", // Ensures the text spans the full width of its container
@@ -41,7 +41,7 @@ const HomePage: React.FC = () => {
     fontWeight: "bold" // Corrected typo in fontWeight property
   };
 
-  const subTextStyle = {
+  const subTextStyle: React.CSSProperties = {
     color: "white", // Ensures text color is white
     textAlign: "center", 
     width: "80%", 
@@ -134,15 +134,16 @@ const HomePage: React.FC = () => {
           justifyContent="center"
           alignItems="center"
         >
-          <Button
-            variant="contained"
-            startIcon={<NavigateNext />}
-            size="large"
-            style={buttonStyle}
-            onClick={() => href='/login' passHref></Link>}
-          >
-            Proceed
-          </Button>
+          <Link href="/login" passHref>
+            <Button
+              variant="contained"
+              startIcon={<NavigateNext />}
+              size="large"
+              style={buttonStyle}
+            >
+              Proceed
+            </Button>
+          </Link>
         </Box>
     </Box>
   );
