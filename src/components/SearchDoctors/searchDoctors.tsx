@@ -5,14 +5,14 @@ import { ethers } from 'ethers';
 import { MoonSigner } from '@moonup/ethers';
 import { MoonSDK } from '@moonup/ethers/node_modules/@moonup/moon-sdk/';
 import { useUserData } from '../userDataContext';
-import appointmentContractABI from '../../../solidity/contracts/appointmentsContractABI.json'; // Import the contract ABI
-import mainContractABI from '../../../solidity/contracts/mainContractABI.json'; // Import the contract ABI
 import { useMoonSDK } from '../usemoonsdk';
+import mainContractABI from '../../../solidity/contracts/mainContractABI.json';
+import appointmentContractABI from '../../../solidity/contracts/appointmentsContractABI.json';
 
 const SearchDoctorsPage = () => {
   const [doctors, setDoctors] = useState([]);
-  const [searchParams, setSearchParams] = useState({ specialty: '', emergency: '' });
-  const [provider, setProvider] = useState(null);
+  const [searchParams, setSearchParams] = useState({ specialty: '', emergency: true || false});
+  // const [provider, setProvider] = useState(null);
   const [signerAddress, setSignerAddress] = useState('');
   const [chainId, setChainId] = useState('');
   const { userData } = useUserData();
@@ -20,37 +20,37 @@ const SearchDoctorsPage = () => {
   const mainContractAddress = process.env.NEXT_PUBLIC_MAIN_CONTRACT_ADDRESS;
   const appointmentContractAddress = process.env.NEXT_PUBLIC_APPOINTMENT_CONTRACT_ADDRESS;  
 
-  // Initialize the provider and signer address
-  useEffect(() => {
-    const fetchProvider = async () => {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      setProvider(provider);
-      setSignerAddress(await provider.getSigner().getAddress());
-      setChainId((await provider.getNetwork()).chainId.toString());  
-    };
-    fetchProvider();
-  }, []);
+  const avalancheFujiTestnetRPC = "https://avalanche-fuji-c-chain.publicnode.com";
+  const provider = new ethers.providers.JsonRpcProvider(avalancheFujiTestnetRPC);
 
   useEffect(() => {
     const fetchDoctors = async () => {
+      if (!provider) {
+        console.error("Provider not initialized. Please check your connection.");
+        return;
+      }
+      
       try {
         const contract = new ethers.Contract(mainContractAddress, mainContractABI, provider);
+        console.log('Contract fetched', contract);
 
         // Fetch all doctors from the contract
         const doctorsData = await contract.getAllDoctors();
+        console.log("Doctors fetched", doctorsData);
 
         // Process and set the doctors data
         // You'll need to adjust this part based on the actual structure of your doctor data
         const doctorsFormatted = doctorsData.map(doctor => ({
+          id: doctor.doctorAddress,
           name: doctor.doctorInfo.name,
           specialty: doctor.doctorInfo.specialty,
           experience: doctor.doctorInfo.timeExperience,
           avaliability: doctor.doctorInfo.availableTimes,
           emergency: doctor.doctorInfo.emergency,
-          address: doctor.doctorAddress
         }));
         
         setDoctors(doctorsFormatted);
+        console.log('Doctors set', doctorsFormatted);
       } catch (error) {
         console.error("Error fetching doctors:", error);
       }
@@ -61,7 +61,6 @@ const SearchDoctorsPage = () => {
   
   // Initialize appointments contract
   const initAppointmentsContract = () => {
-      // Now we use the moon instance directly from moonSDKHook
       const signer = new MoonSigner({
         SDK: moonSDKHook.moon as unknown as MoonSDK,
         address: signerAddress,
