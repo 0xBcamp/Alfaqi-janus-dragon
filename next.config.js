@@ -4,3 +4,5 @@ const nextConfig = {
 }
 
 module.exports = nextConfig;
+
+require('events').EventEmitter.defaultMaxListeners = 30;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import SearchFilters from './searchFilters';
 import DoctorsList from './doctorsList';
 import { ethers } from 'ethers';
@@ -9,19 +9,27 @@ import appointmentContractABI from '../../../solidity/contracts/appointmentsCont
 import mainContractABI from '../../../solidity/contracts/mainContractABI.json'; // Import the contract ABI
 import { useMoonSDK } from '../usemoonsdk';
 
-const SearchDoctorsPage = async () => {
+const SearchDoctorsPage = () => {
   const [doctors, setDoctors] = useState([]);
   const [searchParams, setSearchParams] = useState({ specialty: '', emergency: '' });
+  const [provider, setProvider] = useState(null);
+  const [signerAddress, setSignerAddress] = useState('');
+  const [chainId, setChainId] = useState('');
   const { userData } = useUserData();
   const moonSDKHook = useMoonSDK();
+  const mainContractAddress = process.env.NEXT_PUBLIC_MAIN_CONTRACT_ADDRESS;
+  const appointmentContractAddress = process.env.NEXT_PUBLIC_APPOINTMENT_CONTRACT_ADDRESS;  
 
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const signerAddress = await provider.getSigner().getAddress();
-  const chainId = (await provider.getNetwork()).chainId.toString();
-
-  // Assume you have your contract ABI and address available
-  const mainContractAddress = process.env.MAIN_CONTRACT_ADDRESS; // env variable
-  const appointmentContractAddress = process.env.APPOINTMENT_CONTRACT_ADDRESS; // env variable
+  // Initialize the provider and signer address
+  useEffect(() => {
+    const fetchProvider = async () => {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      setProvider(provider);
+      setSignerAddress(await provider.getSigner().getAddress());
+      setChainId((await provider.getNetwork()).chainId.toString());  
+    };
+    fetchProvider();
+  }, []);
 
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -29,8 +37,7 @@ const SearchDoctorsPage = async () => {
         const contract = new ethers.Contract(mainContractAddress, mainContractABI, provider);
 
         // Fetch all doctors from the contract
-        // You might need to adjust this based on how your contract exposes doctor data
-        const doctorsData = await contract.getAllDoctors(); // This function needs to exist in your contract
+        const doctorsData = await contract.getAllDoctors();
 
         // Process and set the doctors data
         // You'll need to adjust this part based on the actual structure of your doctor data
@@ -50,7 +57,7 @@ const SearchDoctorsPage = async () => {
     };
 
     fetchDoctors();
-  }, []); // Empty dependency array means this effect runs once on component mount
+  }, []);
   
   // Initialize appointments contract
   const initAppointmentsContract = () => {

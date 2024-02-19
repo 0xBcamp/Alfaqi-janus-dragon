@@ -14,26 +14,48 @@ import { newConversation } from "../Consultation/chat/xmtp";
 import { useXMTP } from '../Consultation/chat/xmtpContext';
 
 
-export default async function DoctorDashboard() {
+export default function DoctorDashboard() {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [confirmedAppointments, setConfirmedAppointments] = useState([]);
   const [appointmentRequests, setAppointmentRequests] = useState([]);
-  const mainContractAddress = process.env.REACT_APP_MAIN_CONTRACT_ADDRESS;
-  const appointmentContractAddress = process.env.REACT_APP_APPOINTMENT_CONTRACT_ADDRESS;
-  const userData = useUserData();
+  const [personalDataEntries, setPersonalDataEntries] = useState([]);
+  const [medicalRecords, setMedicalRecords] = useState([]);
+  const [activePatients, setActivePatients] = useState([]);
   const { client, setConversation } = useXMTP();
+  const userData = useUserData();
+
   const moonSDKHook = useMoonSDK();
+  const [provider, setProvider] = useState(null);
+  const [signer, setSigner] = useState(null);
+  const [signerAddress, setSignerAddress] = useState(null);
+  const [chainId, setChainId] = useState(null);
+  
+  const mainContractAddress = process.env.NEXT_PUBLIC_MAIN_CONTRACT_ADDRESS;
+  const appointmentContractAddress = process.env.NEXT_PUBLIC_APPOINTMENT_CONTRACT_ADDRESS;  
+  
+  useEffect(() => {
+    const fetchProvider = async () => {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      setProvider(provider);
+      setSignerAddress(await provider.getSigner().getAddress());
+      setChainId((await provider.getNetwork()).chainId.toString());  
+    };
+    fetchProvider();
+  }, []);
 
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const signerAddress = await provider.getSigner().getAddress();
-  const chainId = (await provider.getNetwork()).chainId.toString();
 
-  // Now we use the moon instance directly from moonSDKHook
-  const signer = new MoonSigner({
-    SDK: moonSDKHook.moon as unknown as MoonSDK,
-    address: signerAddress,
-    chainId,
-  });
+  useEffect(() => {
+    const fetchSigner = async () => {
+      const signer = new MoonSigner({
+        SDK: moonSDKHook.moon as unknown as MoonSDK,
+        address: signerAddress,
+        chainId,
+      });
+      setSigner(signer);
+    }
+    fetchSigner();
+  }
+  , []);
 
   const mainContractProvider = new ethers.Contract(mainContractAddress, mainContractABI, provider);
 
@@ -41,23 +63,43 @@ export default async function DoctorDashboard() {
 
   const appointmentContractSigner = new ethers.Contract(appointmentContractAddress, appointmentContractABI, signer);
 
-  const personalData = {
-    Name: mainContractProvider.getDoctorInfo(userData.userData.address).name,
-    Email: mainContractProvider.getDoctorInfo(userData.userData.address).email,
-    Specialty: mainContractProvider.getDoctorInfo(userData.userData.address).specialty,
-    Experience: mainContractProvider.getDoctorInfo(userData.userData.address).timeExperience,
-    Emergency: mainContractProvider.getDoctorInfo(userData.userData.address).emergencyAppointment,
-    Availability: mainContractProvider.getDoctorInfo(userData.userData.address).availableTime
-  };
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const personalData = {
+        Name: mainContractProvider.getDoctorInfo(userData.userData.address).name,
+        Email: mainContractProvider.getDoctorInfo(userData.userData.address).email,
+        Specialty: mainContractProvider.getDoctorInfo(userData.userData.address).specialty,
+        Experience: mainContractProvider.getDoctorInfo(userData.userData.address).timeExperience,
+        Emergency: mainContractProvider.getDoctorInfo(userData.userData.address).emergencyAppointment,
+        Availability: mainContractProvider.getDoctorInfo(userData.userData.address).availableTime
+      };
+      const personalDataEntries = Object.entries(personalData).map(([key, value]) => ({
+        key,
+        value,
+      }));
+      setPersonalDataEntries(personalDataEntries);
+    }
+    fetchUserData();
+  }, []);
 
-  const personalDataEntries = Object.entries(personalData).map(([key, value]) => ({
-    key,
-    value,
-  }));
+  useEffect (() => {
+    const fetchActivePatients = async () => {
+      const activePatients = mainContractProvider.getActivePatients();
+      setActivePatients(activePatients);
+    }
+    fetchActivePatients();
+  }
+  , []);
 
-  const activePatients = mainContractProvider.getActivePatients(); // Returns an array of active patient addresses
-  const medicalRecords = mainContractProvider.getDoctorReportsHistory(); // Returns an array of IPFS hashes of medical reports
-
+  useEffect(() => {
+    const fetchMedicalRecords = async () => {
+      const medicalRecords = mainContractProvider.getDoctorReportsHistory();
+      setMedicalRecords(medicalRecords);
+    }
+    fetchMedicalRecords();
+  }
+  , []);
+  
   useEffect(() => {
     const fetchAppointments = async () => {
       // Fetch confirmed appointments
