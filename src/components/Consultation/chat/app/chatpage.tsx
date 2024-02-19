@@ -8,7 +8,7 @@ export default function Chat() {
   return (
     <main className="flex h-screen flex-col items-center justify-center p-4 md:px-24 py-32 gap-4">
       <div className="flex justify-between max-w-5xl w-full items-center">
-        <p className="text-4xl font-bold text-gradient">BlockMedSecure Consultation Chat</p>
+        <p className="text-4xl font-bold text-gradient">BlockMedSecure Chat</p>
       </div>
 
       <div className="z-10 border rounded-lg max-w-5xl w-full h-full text-sm lg:flex">

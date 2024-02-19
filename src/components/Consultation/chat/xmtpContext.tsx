@@ -31,7 +31,8 @@ export const XMTPProvider = ({ children }) => {
         await moonSDKHook.initialize();
       }
 
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const avalancheFujiTestnetRPC = "https://avalanche-fuji-c-chain.publicnode.com";
+      const provider = new ethers.providers.JsonRpcProvider(avalancheFujiTestnetRPC);
       const signerAddress = await provider.getSigner().getAddress();
       const chainId = (await provider.getNetwork()).chainId.toString();
 
@@ -47,7 +48,7 @@ export const XMTPProvider = ({ children }) => {
     };
 
     initializeXMTP();
-  }, [userData.address, moonSDKHook.moon]);
+  }, []);
 
   const updateConversation = (newConversation: any | null) => {
     setConversation(newConversation);

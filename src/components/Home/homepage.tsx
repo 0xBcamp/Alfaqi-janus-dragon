@@ -58,10 +58,6 @@ const HomePage: React.FC = () => {
   const updateIsDoctor = (newIsDoctor) => {
     userData.isDoctor = newIsDoctor;
   };
-
-  const updateIsPatient = (newIsPatient) => {
-    userData.isPatient = newIsPatient;
-  };
   
   return (
     <Box
@@ -92,7 +88,10 @@ const HomePage: React.FC = () => {
               startIcon={<AccountCircle />}
               size="large"
               style={buttonStyle}
-              onClick={() => {updateIsDoctor(true); updateIsPatient(false)}}
+              onClick={() => {
+                updateIsDoctor(true)
+                // Blink the button to indicate the selection
+              }}
             >
               Doctor
             </Button>
@@ -103,7 +102,7 @@ const HomePage: React.FC = () => {
               startIcon={<SickIcon />}
               size="large"
               style={buttonStyle}
-              onClick={() => {updateIsPatient(true); updateIsDoctor(false)}}
+              onClick={() => {updateIsDoctor(false)}}
             >
               Patient
             </Button>

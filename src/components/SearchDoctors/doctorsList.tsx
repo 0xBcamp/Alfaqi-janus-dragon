@@ -6,6 +6,7 @@ import InputBase from '@mui/material/InputBase';
 type Doctor = {
   id: string; //address
   name: string;
+  email: string;
   specialty: string;
   experience: string;
   avaliability: string;

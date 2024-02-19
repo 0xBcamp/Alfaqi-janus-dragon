@@ -25,7 +25,9 @@ export default function PatientDashboard() {
 
   useEffect(() => {
     const fetchProvider = async () => {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const avalancheFujiTestnetRPC = "https://avalanche-fuji-c-chain.publicnode.com";
+      const provider = new ethers.providers.JsonRpcProvider(avalancheFujiTestnetRPC);
+      
       setProvider(provider);
     };
     fetchProvider();

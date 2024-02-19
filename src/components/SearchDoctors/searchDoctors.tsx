@@ -1,7 +1,7 @@
 import React, { useState, useEffect, use } from 'react';
 import SearchFilters from './searchFilters';
 import DoctorsList from './doctorsList';
-import { ethers } from 'ethers';
+import  ethers from 'ethers';
 import { MoonSigner } from '@moonup/ethers';
 import { MoonSDK } from '@moonup/ethers/node_modules/@moonup/moon-sdk/';
 import { useUserData } from '../userDataContext';
@@ -12,16 +12,26 @@ import appointmentContractABI from '../../../solidity/contracts/appointmentsCont
 const SearchDoctorsPage = () => {
   const [doctors, setDoctors] = useState([]);
   const [searchParams, setSearchParams] = useState({ specialty: '', emergency: true || false});
-  // const [provider, setProvider] = useState(null);
+  const [provider, setProvider] = useState(null);
   const [signerAddress, setSignerAddress] = useState('');
   const [chainId, setChainId] = useState('');
   const { userData } = useUserData();
   const moonSDKHook = useMoonSDK();
   const mainContractAddress = process.env.NEXT_PUBLIC_MAIN_CONTRACT_ADDRESS;
   const appointmentContractAddress = process.env.NEXT_PUBLIC_APPOINTMENT_CONTRACT_ADDRESS;  
+  const avalancheFujiTestnetRPC = "https://rpc.ankr.com/avalanche_fuji";
 
-  const avalancheFujiTestnetRPC = "https://avalanche-fuji-c-chain.publicnode.com";
-  const provider = new ethers.providers.JsonRpcProvider(avalancheFujiTestnetRPC);
+  useEffect(() => {
+    const fetchProvider = async () => {
+      const provider = new ethers.providers.JsonRpcProvider(avalancheFujiTestnetRPC);
+
+      setProvider(provider);
+      setSignerAddress(await provider.getSigner().getAddress());
+      setChainId((await provider.getNetwork()).chainId.toString());  
+  
+    }
+    fetchProvider();
+  }, []);
 
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -39,15 +49,17 @@ const SearchDoctorsPage = () => {
         console.log("Doctors fetched", doctorsData);
 
         // Process and set the doctors data
-        // You'll need to adjust this part based on the actual structure of your doctor data
+
         const doctorsFormatted = doctorsData.map(doctor => ({
-          id: doctor.doctorAddress,
+          id: doctor.walletAddress,
           name: doctor.doctorInfo.name,
+          email: doctor.doctorInfo.email,
           specialty: doctor.doctorInfo.specialty,
           experience: doctor.doctorInfo.timeExperience,
-          avaliability: doctor.doctorInfo.availableTimes,
-          emergency: doctor.doctorInfo.emergency,
+          avaliability: doctor.doctorInfo.availableTime,
+          emergency: doctor.doctorInfo.emergencyAppointment,
         }));
+        console.log('Doctors formatted', doctorsFormatted);
         
         setDoctors(doctorsFormatted);
         console.log('Doctors set', doctorsFormatted);

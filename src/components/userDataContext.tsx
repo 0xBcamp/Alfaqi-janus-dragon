@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface UserData {
   isDoctor: boolean | null;
-  isPatient: boolean | null;
   alias: string ;
   address: string | null;
   email: string | null;
@@ -26,7 +25,6 @@ export const useUserData = (): UserDataContextType => {
 export const UserDataProvider: React.FC<{children: ReactNode}> = ({ children }) => {
   const [userData, setUserData] = useState<UserData>({
     isDoctor: null,
-    isPatient: null,
     alias: "User",
     address: null,
     email: null,
