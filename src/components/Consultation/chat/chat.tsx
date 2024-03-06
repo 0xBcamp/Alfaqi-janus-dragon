@@ -1,74 +1,125 @@
-import React, { useEffect, useState } from "react";
-import { Message } from "./app/data";
-import ChatTopbar from "./chat-topbar";
-import { ChatList } from "./chat-list";
-import { sendMessage, streamMessages } from "./xmtp";
+import React, { useState, useEffect } from 'react';
 import { useXMTP } from './xmtpContext';
-import { useUserData } from '../../userDataContext';
+import { sendMessage, streamMessages } from './xmtp';
 
-export function Chat({ messages, selectedUser, isMobile }) {
-  const [messagesState, setMessages] = useState<Message[]>(messages ?? []);
-  const { conversation } = useXMTP();
-  const { userData } = useUserData();
+
+interface Message {
+  id: string;
+  senderId: string; // User address
+  text: string;
+}
+
+interface MessageListProps {
+  messages: Message[];
+}
+
+interface SendMessageFormProps {
+  sendMessage: (conversation: any, message: string) => void;
+  conversation: any;
+}
+
+interface SendMessageFormState {
+  message: string;
+}
+
+class MessageList extends React.Component<MessageListProps> {
+  render() {
+      return (
+          <ul className="message-list">
+              {this.props.messages.map((message, index) => {
+                  return (
+                    <li key={message.id} className="message">
+                      <div>{message.senderId}</div>
+                      <div>{message.text}</div>
+                    </li>
+                  )
+              })}
+          </ul>
+      )
+  }
+}
+
+
+class SendMessageForm extends React.Component<SendMessageFormProps, SendMessageFormState> {
+  constructor(props: SendMessageFormProps) {
+      super(props);
+      this.state = {
+          message: ''
+      };
+      this.handleChange = this.handleChange.bind(this);
+      this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  
+  handleChange(e) {
+      this.setState({
+          message: e.target.value
+      })
+  }
+  
+  handleSubmit(e) {
+    e.preventDefault();
+    if (this.props.conversation) {
+        this.props.sendMessage(this.props.conversation, this.state.message);
+        this.setState({
+            message: ''
+        });
+    }
+}
+  
+  render() {
+      return (
+          <form
+              onSubmit={this.handleSubmit}
+              className="send-message-form">
+              <input
+                  onChange={this.handleChange}
+                  value={this.state.message}
+                  placeholder="Type your message and hit ENTER"
+                  type="text" />
+          </form>
+      )
+  }
+}
+
+function Title() {
+return <p className="title">BlockMedSecure Medical Chat</p>
+}
+
+const Chat = () =>{
+  const [messages, setMessages] = useState([]);
+  const [conversationList, setConversationList] = useState(null);
+  const xmtp = useXMTP();
 
   useEffect(() => {
-    let unsubscribe = () => {}; // Function to stop listening to new messages
-
-    const setupXMTP = async () => {
-      if (!selectedUser?.address) return;
-      const stream = async () => {
-        for await (const message of await streamMessages(conversation)) {
-          setMessages((prevMessages) => [...prevMessages, {
-            id: Date.now(), // Consider using a more reliable method for unique IDs
-            name: selectedUser.alias,
-            message: message.content,
-            senderAddress: message.senderAddress,
-          }]);
+    const retrieveMessages = async () => {
+      if (xmtp.conversation) {
+        for await (const message of await streamMessages(xmtp.conversation)) {
+          setMessages(prevMessages => [...prevMessages, message]);
         }
-      };
-
-      stream();
-      
-      // Define cleanup function to stop the message stream
-      unsubscribe = () => {
-        // Implement stopping the stream if XMTP provides a method for it
-      };
+      }
     };
 
-    setupXMTP();
+    retrieveMessages();
+  }, [xmtp.conversation]);
 
-    // Cleanup function
-    return () => {
-      unsubscribe();
-    };
-  }, [selectedUser, userData.alias]);
+  useEffect(() => {
+    setConversationList(xmtp.conversationList);
+  }, [xmtp.conversationList]); // Conversation list currently not used
 
-  const sendMessages = async (newMessageContent) => {
-    if (!conversation) return;
 
-    // Send message
-    await sendMessage(conversation, newMessageContent); // Make sure this matches your actual API
-
-    // Update local state with new message
-    const newMessage = {
-      id: Date.now(),
-      name: userData.alias,
-      message: newMessageContent,
-      senderAddress: userData.address,
-    };
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
+  const handleSendMessage = async (text) => {
+    if (xmtp.conversation) {
+      await sendMessage(xmtp.conversation, text);
+    }
   };
 
   return (
-    <div className="bg-white flex flex-col justify-between w-full h-full">
-      <ChatTopbar selectedUser={selectedUser} />
-
-      <ChatList
-        messages={messagesState}
-        selectedUser={selectedUser}
-        sendMessage={sendMessages}
-        isMobile={isMobile}
-      />
+    <div className="app">
+      <Title />
+      <MessageList messages={messages} /> 
+      <SendMessageForm sendMessage={handleSendMessage} conversation={xmtp.conversation} />
     </div>
   );
-}
+};
+
+export default Chat;

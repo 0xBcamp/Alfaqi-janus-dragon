@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
-import { useMoonSDK } from "./usemoonsdk";
+import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { useMoonSDK } from "../Moon/usemoonsdk";
 import { useUserData } from "./userDataContext";
+
 
 // Adjusting the AuthContextType to include login and logout functions
 interface AuthContextType {
@@ -36,6 +37,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [role, setRole] = useState<string>('');
   const { userData } = useUserData();
+
+  useEffect(() => {
+    const restoreSession = async () => {
+      const storedMoonSession = sessionStorage.getItem(userData.alias);
+      if (storedMoonSession) {
+        // Restore login state, you might need to adjust based on what you store in session
+        setIsAuthenticated(true);
+        // If you store role or other user data, restore it here as well
+      }
+    };
+
+    restoreSession();
+  }, []);
 
   const login = () => {
     setIsAuthenticated(true);

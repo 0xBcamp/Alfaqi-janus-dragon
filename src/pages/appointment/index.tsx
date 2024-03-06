@@ -1,4 +1,4 @@
-import Chat from "../../components/Consultation/chat/app/chatpage";
+import Chat from "../../components/Consultation/chat/chat";
 import PatientRecords from "../../components/Consultation/patientRecords";
 import Image from "next/image";
 import bgImage from "../../public/bg1.svg";

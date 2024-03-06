@@ -1,6 +1,6 @@
 import { Box, ThemeProvider } from "@mui/material";
 import { theme } from "./LoginTheme";
-import bgImage from '../pages/assets/bg.png';
+import bgImage from '../../pages/assets/bg.png';
 
 const Layout: React.FC<{ children: JSX.Element | JSX.Element[] }> = ({
   children,

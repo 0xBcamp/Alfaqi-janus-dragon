@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useUserData } from '../userDataContext';
-import { getDataFromIPFS } from '../ipfsHelia';
-import { decryptData } from '../encryptData';
+import { useUserData } from '../Contexts/userDataContext';
+import { getDataFromIPFS } from '../IPFS/ipfsHelia';
+import { decryptData } from '../IPFS/encryptData';
 import mainContractABI from '../../../solidity/contracts/mainContractABI.json';
 import { ethers } from 'ethers';
 import { Card, Title } from '@tremor/react';

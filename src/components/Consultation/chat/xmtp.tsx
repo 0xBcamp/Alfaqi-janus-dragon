@@ -4,7 +4,7 @@ import {
   RemoteAttachmentCodec,
   ContentTypeRemoteAttachment,
 } from "@xmtp/content-type-remote-attachment";
-import { addDataToIPFS } from "../../ipfsHelia";
+import { addDataToIPFS } from "../../IPFS/ipfsHelia";
 
 // Check if an address is on the network
 // First you need to check if the address you want to message is on the XMTP network. You can do this by calling client.canMessage with the address you want to message.
