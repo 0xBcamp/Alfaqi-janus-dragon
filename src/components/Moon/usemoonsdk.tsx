@@ -2,7 +2,7 @@ import { CreateAccountInput } from '@moonup/moon-api';
 import { MoonSDK } from '@moonup/moon-sdk';
 import { MoonProvider } from '@moonup/ethers';
 import { AUTH, MOON_SESSION_KEY, Storage, MoonConfig } from '@moonup/moon-types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useUserData } from '../Contexts/userDataContext';
 import { ethers } from 'ethers';
 
@@ -30,13 +30,22 @@ const moonConfig: MoonConfig = {
 	],
 };
 
-const USER_KEY = useUserData().userData.alias;
-
 export const useMoonSDK = () => {
 	const [moon, setMoon] = useState<MoonSDK | null>(null);
 	const [signer, setSigner] = useState<ethers.Signer | null>(null);
 	const [provider, setProvider] = useState<ethers.providers.Web3Provider | null>(null);
+	const [USER_KEY, setUSER_KEY] = useState<string | null>(null);
 	const { userData } = useUserData();
+
+	useEffect(() => {
+		if (!userData) 
+		{
+			return;
+		}
+
+		setUSER_KEY(userData.alias);
+
+		}, [userData]);
 
 	const initialize = async () => {
 		const storedMoonSession = sessionStorage.getItem(USER_KEY);

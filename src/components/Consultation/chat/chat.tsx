@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useXMTP } from './xmtpContext';
+import { startStream, playStream } from '../livepeer';
 import { sendMessage, streamMessages } from './xmtp';
 
 
@@ -112,10 +113,35 @@ const Chat = () =>{
       await sendMessage(xmtp.conversation, text);
     }
   };
+  
+  const handleVideoStart = async () => {
+    try {
+      const stream = await startStream("Doctor's Stream", true);
+
+      const streamUrl = `https://livepeer.studio/api/playback/${stream.playbackId}`;
+
+      // Assume you have the recipient's conversation/address
+      await handleSendMessage(`[Video Call](${streamUrl})`);
+
+      // Call playStream to get the video player component and display it
+      const videoComponent = playStream("Doctor's Stream", stream.playbackId);
+      setVideoPlayer(videoComponent); // Set the component to state for rendering
+    } catch (error) {
+      console.error("Error starting stream or sending message:", error);
+    }
+  };
+
+    } catch (error) {
+      console.error("Error starting stream or sending message:", error);
+    }
+  };
 
   return (
     <div className="app">
       <Title />
+      <button onClick={handleVideoStart} className="video-call-button">
+          Start Video Call
+        </button>
       <MessageList messages={messages} /> 
       <SendMessageForm sendMessage={handleSendMessage} conversation={xmtp.conversation} />
     </div>
