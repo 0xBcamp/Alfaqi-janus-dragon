@@ -1,8 +1,8 @@
-import LoginPage from "../../components/LoginPage";
-import Layout from "../../components/LoginLayout";
+import LoginPage from "../../components/Login/LoginPage";
+import Layout from "../../components/Login/LoginLayout";
 import { Box, Grid } from "@mui/material";
 import Image from "next/image";
-import TitleBox from "../../components/TitleBox";
+import TitleBox from "../../components/Login/TitleBox";
 import bgImage from "../../public/bg1.svg";
 
 

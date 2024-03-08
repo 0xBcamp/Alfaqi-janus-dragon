@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { useUserData } from '../userDataContext';
-import { getDataFromIPFS } from '../ipfsHelia';
-import { decryptData } from '../encryptData';
+import { useUserData } from '../Contexts/userDataContext';
+import { getDataFromIPFS } from '../IPFS/ipfsHelia';
+import { decryptData } from '../IPFS/encryptData';
 import mainContractABI from '../../../solidity/contracts/mainContractABI.json';
 import { ethers } from 'ethers';
-
+import { Card, Title } from '@tremor/react';
 
 const PatientRecords = () => {
-  const userData = useUserData();
+  const { userData } = useUserData();
   const [records, setRecords] = useState([]);
   const [provider, setProvider] = useState(null);
   const mainContractAddress = process.env.NEXT_PUBLIC_MAIN_CONTRACT_ADDRESS;  
 
   useEffect(() => {
     const fetchProvider = async () => {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const avalancheFujiTestnetRPC = "https://avalanche-fuji-c-chain.publicnode.com";
+      const provider = new ethers.providers.JsonRpcProvider(avalancheFujiTestnetRPC);
       setProvider(provider);
     };
 
@@ -26,41 +27,46 @@ const PatientRecords = () => {
   useEffect(() => {
     const fetchRecords = async () => {
       try {
-        const records = await mainContract.getPatientMedicalRecords(userData.userData.address);
-        const formattedRecords = records.map(async record => {
+        const records = await mainContract.getPatientMedicalRecords(userData.address);
+        const formattedRecordsPromises = records.map(async record => {
           const doctorName = await mainContract.getDoctorName(record.doctorAddress);
+          const reportData = await getDataFromIPFS(record.ipfsHash);
+          const decryptedReport = await decryptData(reportData);
           return {
             doctorName,
             date: record.reportDate,
             time: record.reportTime,
-            report: await decryptData(getDataFromIPFS(record.ipfsHash)),
+            report: decryptedReport,
           };
         });
-
+  
+        const formattedRecords = await Promise.all(formattedRecordsPromises);
         setRecords(formattedRecords);
       } catch (error) {
         console.error('Error fetching records:', error);
       }
     };
-
-    if (userData.userData.address) {
+  
+    if (userData.address && provider) { // Ensure provider is set before fetching
       fetchRecords();
     }
-  }, [userData.userData.address]);
+  }, [userData.address, provider]); // Add provider to the dependency array
 
   return (
-    <div className="p-4">
-      <h2 className="text-lg font-semibold">Patient Medical Records</h2>
-      <ul>
-        {records.map((record, index) => (
-          <li key={index} className="mt-2">
-            <p>{record.doctorName}</p>
-            <p>{record.date}</p>
-            <p>{record.time}</p>
-            <p>{record.report}</p>
-          </li>
-        ))}
-      </ul>
+    <div className="h-full">
+      <Card className="p-4 bg-gray-800 text-white rounded-lg w-full h-1/2">
+        <Title className="text-lg font-bold mb-4">Patient Medical Records</Title>
+          <ul className="overflow-auto">
+            {records.map((record, index) => (
+              <li key={index} className="mt-2">
+                <p>{record.doctorName}</p>
+                <p>{record.date}</p>
+                <p>{record.time}</p>
+                <p>{record.report}</p>
+              </li>
+            ))}
+          </ul>
+      </Card>
     </div>
   );
 }

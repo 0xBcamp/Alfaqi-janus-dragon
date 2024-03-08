@@ -211,6 +211,10 @@ contract BlockMedSecure is Ownable {
         emit MedicalReportAdded(patientAddress, msg.sender, reportNumber, reportDate, ipfsHash); 
     }
 
+    /** * @dev Function for a patient to give permission to a doctor to access their medical data. 
+        * @param patientAddress The Ethereum address of the patient.
+        * @param doctorAddress The Ethereum address of the doctor. 
+    */
     function grantPermissionToDoctor(address patientAddress, address doctorAddress) external {
         // Ensure only the patient or an authorized entity can grant permission
     
@@ -218,6 +222,10 @@ contract BlockMedSecure is Ownable {
         patients[patientAddress].permissions[doctorAddress] = true;
     }
 
+    /** * @dev Function for a patient to revoke permission from a doctor to access their medical data. 
+        * @param patientAddress The Ethereum address of the patient. 
+        * @param doctorAddress The Ethereum address of the doctor. 
+    */
     function revokePermissionFromDoctor(address patientAddress, address doctorAddress) external {
         // Ensure only the patient or an authorized entity can revoke permission
         

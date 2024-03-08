@@ -1,15 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Client } from "@xmtp/xmtp-js";
-import { useUserData } from "../../userDataContext";
-import { MoonSigner } from '@moonup/ethers';
-import { useMoonSDK } from "../../usemoonsdk";
-import { MoonSDK } from '@moonup/ethers/node_modules/@moonup/moon-sdk/';
-import { ethers } from 'ethers';
+import { useUserData } from "../../Contexts/userDataContext";
+import { useMoonSDK } from "../../Moon/usemoonsdk";
 
-// Update the context type definition
 const XMTPContext = createContext({
   client: null,
   conversation: null,
+  conversationList: [],
   setConversation: (conversation: any | null) => {},
 });
 
@@ -18,42 +15,46 @@ export const useXMTP = () => useContext(XMTPContext);
 export const XMTPProvider = ({ children }) => {
   const [client, setClient] = useState(null);
   const [conversation, setConversation] = useState(null);
+  const [conversationList, setConversationList] = useState([]);
   const { userData } = useUserData();
-  const moonSDKHook = useMoonSDK();
+  const moonSDK = useMoonSDK();
 
 
   useEffect(() => {
     const initializeXMTP = async () => {
-      if (!userData.address || !moonSDKHook.moon) return;
+      if (!userData.address || !moonSDK.moon) return;
 
       // Ensure MoonSDK is initialized
-      if (!moonSDKHook.moon) {
-        await moonSDKHook.initialize();
+      if (!moonSDK.moon) {
+        await moonSDK.initialize();
       }
 
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signerAddress = await provider.getSigner().getAddress();
-      const chainId = (await provider.getNetwork()).chainId.toString();
-
-      // Now we use the moon instance directly from moonSDKHook
-      const signer = new MoonSigner({
-        SDK: moonSDKHook.moon as unknown as MoonSDK,
-        address: signerAddress,
-        chainId,
-      });
+      // Retrives the signer
+      const signer = moonSDK.signer;
 
       const xmtpClient = await Client.create(signer, { env: "dev" });
       setClient(xmtpClient);
     };
 
     initializeXMTP();
-  }, [userData.address, moonSDKHook.moon]);
+  }, []);
+
+  useEffect(() => {
+    const fetchConversations = async () => {
+      if (client) {
+        const conversations = await client.conversations.list();
+        setConversationList(conversations);
+      }
+    };
+
+    fetchConversations();
+  }, [client, conversation]);
 
   const updateConversation = (newConversation: any | null) => {
     setConversation(newConversation);
   };
 
-  const value = { client, conversation, setConversation: updateConversation };
+  const value = { client, conversation, conversationList, setConversation: updateConversation };
 
   return <XMTPContext.Provider value={value}>{children}</XMTPContext.Provider>;
 };

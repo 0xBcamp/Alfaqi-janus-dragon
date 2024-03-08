@@ -3,7 +3,7 @@ import { Button, Box, Typography, Card, InputBase } from "@mui/material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import SickIcon  from "@mui/icons-material/Sick";
 import NavigateNext from "@mui/icons-material/NavigateNext";
-import { useUserData } from "../userDataContext";
+import { useUserData } from "../Contexts/userDataContext";
 import Link from "next/link";
 
 
@@ -52,15 +52,15 @@ const HomePage: React.FC = () => {
 
   // Update userData
   const updateAlias = (newAlias: string) => {
+    if (newAlias === "") {
+      newAlias = "User";
+    } else {
     userData.alias = newAlias;
+    }
   };
 
   const updateIsDoctor = (newIsDoctor) => {
     userData.isDoctor = newIsDoctor;
-  };
-
-  const updateIsPatient = (newIsPatient) => {
-    userData.isPatient = newIsPatient;
   };
   
   return (
@@ -92,7 +92,10 @@ const HomePage: React.FC = () => {
               startIcon={<AccountCircle />}
               size="large"
               style={buttonStyle}
-              onClick={() => {updateIsDoctor(true); updateIsPatient(false)}}
+              onClick={() => {
+                updateIsDoctor(true)
+                // Blink the button to indicate the selection
+              }}
             >
               Doctor
             </Button>
@@ -103,7 +106,7 @@ const HomePage: React.FC = () => {
               startIcon={<SickIcon />}
               size="large"
               style={buttonStyle}
-              onClick={() => {updateIsPatient(true); updateIsDoctor(false)}}
+              onClick={() => {updateIsDoctor(false)}}
             >
               Patient
             </Button>

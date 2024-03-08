@@ -4,12 +4,10 @@ import {
 	EmailLoginInput,
 	EmailSignupInput,
 } from '@moonup/moon-api';
-import { useMoonSDK } from './usemoonsdk';
+import { useMoonSDK } from '../Moon/usemoonsdk';
 import React, { useState } from "react";
-import { useAuth } from "./authContext";
-import { useUserData } from "./userDataContext";
-import Link from "next/link";
-
+import { useAuth } from "../Contexts/authContext";
+import { useUserData } from "../Contexts/userDataContext";
 
 const LoginPage: React.FC = () => {
 	// States for authentication
@@ -35,15 +33,6 @@ const LoginPage: React.FC = () => {
 		setUserData((prev: any) => ({ ...prev, email: newEmail }));
 	}
 
-	// Moon SDK states and functions
-	const {
-		moon,
-		connect,
-		createAccount,
-		updateToken,
-		initialize
-	} = useMoonSDK();
-	
 	// Handle email and password input changes
 	const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setEmail(event.target.value);
@@ -58,6 +47,15 @@ const LoginPage: React.FC = () => {
 	) => {
 		setConfirmPassword(event.target.value);
 	};
+
+	// Moon SDK states and functions
+	const {
+		moon,
+		connect,
+		createAccount,
+		updateToken,
+		initialize
+	} = useMoonSDK();
 	
 	// Initialize and connect to Moon
 	const handleInitializeAndConnect = async () => {
@@ -137,18 +135,18 @@ const LoginPage: React.FC = () => {
 			);
 			moon.MoonAccount.setEmail(email);
 			moon.MoonAccount.setExpiry(loginResponse.data.expiry);
-			console.log('Tokens and email updated!');
 
 			// Perform sign-in logic with MoonSDK
 			console.log('Creating account...');
 			const newAccount = await createAccount();
 			console.log('New Account Data:', newAccount?.data);
-			console.log('Setting expiry and navigating...');
 			moon.MoonAccount.setExpiry(loginResponse.data.expiry);
 
 			// Update auth context to authenticated
 			login();
-			console.log('Authentication successful:', loginResponse);
+			if ('address' in newAccount.data.data) {
+				console.log('Print user address:', newAccount.data.data.address);
+			}
 
 			// Update user data context with the email and address associated
 			updateEmail(email);
@@ -164,9 +162,6 @@ const LoginPage: React.FC = () => {
 			if (userData.isDoctor) {
 				window.alert('Sign in successful! Redirecting to dashboard...');
 				window.location.href = '/doctor';
-			} else if (userData.isPatient) {
-				window.alert('Sign in successful! Redirecting to dashboard...');
-				window.location.href = '/patient';
 			} else {
 				// Show success message popup and redirect to home
 				window.alert('Sign in successful! Redirecting to home...');

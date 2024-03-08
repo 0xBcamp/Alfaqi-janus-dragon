@@ -28,7 +28,7 @@ async function getDataFromIPFS(cid) {
     // Decrypt the data
     const decryptedData = decryptData(data);
 
-    return data;
+    return decryptedData;
 }
 
 export { addDataToIPFS, getDataFromIPFS };

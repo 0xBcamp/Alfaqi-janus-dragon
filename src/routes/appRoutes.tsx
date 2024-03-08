@@ -35,7 +35,6 @@ const appRoutes: RouteType[] = [
       displayText: "Patient Dashboard",
       icon: <PatientIcon />,
     },
-    role: ["patient"],
   },
   {
     path: "/doctor",
